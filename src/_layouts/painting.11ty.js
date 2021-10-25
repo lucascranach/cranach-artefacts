@@ -256,7 +256,7 @@ const getImageStripe = ({ content }) => {
     const images = imageStack[key].images;
     const html = images.map(image => {
 
-      const title = image.metadata && image.metadata[langCode] ? this.altText(image.metadata[langCode].description) : `${key}`;
+      const title = image.metadata && image.metadata ? this.altText(image.metadata.description) : `${key}`;
       return `
         <li
           class="image-stripe-list__item has-interaction"

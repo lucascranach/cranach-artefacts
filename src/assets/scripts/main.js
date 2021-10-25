@@ -32,7 +32,7 @@ class ImageViewer {
   }
 
   setCaption(img) {
-    const metadata = img.metadata[langCode];
+    const metadata = img.metadata;
     const fileType = !metadata.fileType ? '' : `<li class="image-description-title">${metadata.fileType}</li>`;
     const description = !metadata.description ? '' : `<li class="image-description-text">${metadata.description}</li>`;
     const date = !metadata.date ? '' : `<li class="image-description-date">${metadata.date}</li>`;
