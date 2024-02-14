@@ -72,11 +72,30 @@ const getReprints = (eleventy, { content }, conditionLevel, secondConditionLevel
     },
   );
 
+  // condition = zustand, edition = auflage
+  // TODO: Filter editions only for selected condition
+  // TODO: Filter reprints only for current edition
+  const editions = content.dating.historicEventInformations.filter(((event) => event.eventType === 'EDITION'));
+
+  const editionsList = editions.map((edition) => {
+    const letter = edition.remarks.substring(0, edition.remarks.indexOf(' '));
+    const description = edition.remarks.substring(edition.remarks.indexOf(' ') + 1);
+    return `
+      <details style="">
+        <summary>Auflage ${letter}: ${edition.text}</summary>
+        <p>${description}</p>
+        <div class="reprints-gallery">
+          ${reprintsList.join('')}
+        </div>
+      </details>
+    `;
+  });
+
   return reprints.length === 0 ? '' : `
     <div class="reprints-block block">
       <h3 class="reprints-state">${state}</h3>
       <div class="artefact-overview">
-        ${reprintsList.join('')}
+        ${editionsList.join('')}
       </div>
     </div>
   `;
@@ -119,7 +138,6 @@ exports.render = function (pageData) {
 
   const cranachCollectBaseUrl = this.getCranachCollectBaseUrl();
   const cranachCollectScript = config.cranachCollect.script;
-
 
   return `<!doctype html> 
   <html lang="${langCode}">
