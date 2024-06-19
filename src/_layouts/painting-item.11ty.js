@@ -27,6 +27,7 @@ const reportsSnippet = require('./components/reports.11ty');
 const additionalTextInformationSnippet = require('./components/additional-text-information.11ty');
 const referencesSnippet = require('./components/references.11ty');
 const navigationSnippet = require('./components/navigation.11ty');
+const metadataDrawerSnippet = require('./components/metadata-drawer.11ty');
 
 const ART_TECH_EXAMINATION = 'ArtTechExamination';
 const CONDITION_REPORT = 'ConditionReport';
@@ -102,13 +103,14 @@ exports.render = function (pageData) {
   const citeCda = citeCdaSnippet.getCiteCDA(this, data, langCode);
   const improveCdaSnippet = improveCda.getImproveCDA(this, data, config, langCode);
   const copyright = copyrightSnippet.getCopyright();
-  const pageDate = pageDateSnippet.getPageDate(this, langCode);
+  // const pageDate = pageDateSnippet.getPageDate(this, langCode);
   const navigation = navigationSnippet.getNavigation(this, langCode, id);
   const navigationObjects = JSON.stringify(this.getObjectsForNavigation(data.content.metadata.id));
 
   const cranachCollectBaseUrl = this.getCranachCollectBaseUrl();
   const cranachCollectScript = config.cranachCollect.script;
-
+  const metadataDrawer = metadataDrawerSnippet.getMetadataDrawer();
+  const shouldIncludeMetadataEditor = process.env.ELEVENTY_ENV === 'internal' || process.env.ELEVENTY_ENV === 'development';
   return `<!doctype html> 
   <html lang="${langCode}">
     <head>
@@ -118,6 +120,8 @@ exports.render = function (pageData) {
       <link href="${this.url('/assets/images/favicon.svg')}" rel="icon" type="image/svg">
       <script>
         const objectData = {};
+        objectData.metadataApiEndpoint = "${shouldIncludeMetadataEditor ? process.env.METADATA_API_ENDPOINT : ''}";
+        objectData.metadataApiKey = "${shouldIncludeMetadataEditor ? process.env.METADATA_API_KEY : ''}";
         objectData.langCode = "${langCode}";
         objectData.imageStack = ${imageStack};
         objectData.baseUrl = "${baseUrl}/${langCode}";
@@ -126,10 +130,12 @@ exports.render = function (pageData) {
         objectData.translations = ${translationsClient};
         objectData.asseturl = "${this.url('/assets')}";
         objectData.inventoryNumber = "${id}";
+        objectData.idExtension = "${data.content.objectName}";
         objectData.navigationObjects = '${navigationObjects}';
       </script>
     </head>
     <body>
+      ${shouldIncludeMetadataEditor ? metadataDrawer : ''}
       <div id="page">
         ${navigation}
           <section class="leporello-recog js-main-content">
@@ -178,8 +184,8 @@ exports.render = function (pageData) {
                 <div id="viewer-content" class="image-viewer__content"></div>
               </div>
               <figcaption class="image-caption-wrap">
-                ${imageDescriptionObjectInfo}
-                <div id="image-caption" class="image-caption is-secondary has-seperator foldable-block"></div>
+              ${imageDescriptionObjectInfo}
+              <div id="image-caption" class="image-caption is-secondary has-seperator foldable-block"></div>
               </figcaption>
             </figure>
           </div>

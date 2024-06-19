@@ -15,7 +15,7 @@ const config = {
   "dist": "./docs",
   "compiledContent": "./compiled-content",
   "graphicPrefix": "GWN_",
-  "onlyDevObjects": false,
+  "onlyDevObjects": true,
   "generateLiterature": true,
   "generateAuthors": false,
   "generatePaintings": true,

@@ -46,12 +46,21 @@ exports.getNavigation = (eleventy, langCode, objectId, type) => {
     </ul>
   `;
 
+  const metadataDrawerSwitcher = process.env.ELEVENTY_ENV === 'internal' || process.env.ELEVENTY_ENV === 'development'
+    ? `<div data-icon="edit_note"
+      class="js-toggle-metadata-drawer"
+      title="Open metadata editor"
+      style="font-size: 1.89rem; color: rgb(255, 204, 0); padding-bottom: 4px;"
+    ></div>`
+    : '';
+
   return `
     <nav class="main-navigation js-navigation">
       <div class="primary-navigation">
         ${primaryNavigationIterms}
       </div>
       <div class="secondary-navigation">
+        ${metadataDrawerSwitcher}
         <div class="options js-options">
           ${languageSwitcher}
           <button 
