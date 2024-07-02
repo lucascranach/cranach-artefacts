@@ -1,15 +1,21 @@
 const overallOverviewSnippet = require('./overall-overview.11ty');
 
 const getReferencesForPaintings = (content) => content.references;
-const getReferencesForGraphics = (content) => content.references.relatedWorks;
+const getReferencesForGraphics = (content) => content.references;
 
 
 exports.getReference = (eleventy, data, langCode, type, isOpen = false) => {
   const { content } = data;
   const { entityType } = content;
+  
+  // Filterung der Referenztypen um zu den richtigen Daten zu kommen zwischen Gemälden, virtuellen Grafiken und realen Grafiken.
   const references = entityType === 'paintings'
-    ? getReferencesForPaintings(content)
-    : getReferencesForGraphics(content);
+    ? getReferencesForPaintings(content):
+    type === 'IDENTICAL_WATERMARK'
+    ? getReferencesForGraphics(content).watermark:
+    type === 'ON_SAME_SHEET'
+    ? getReferencesForGraphics(content).sameSheet:
+    getReferencesForGraphics(content).relatedWorks;
 
   const overallOverview = overallOverviewSnippet.getOverallOverview(eleventy, data, langCode);
   

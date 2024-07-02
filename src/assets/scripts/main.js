@@ -13,6 +13,16 @@ const parseJson = (jsonString) => {
   }
 };
 
+/* Load live metadata from cranach-metadata-service
+============================================================================ */
+
+const setMetadata = async (artefactId, imageId, apiEndpoint, apiKey) => {
+  document.querySelector('iframe').setAttribute(
+    'src',
+    `${apiEndpoint}?artefact=${artefactId}&image=${imageId}&apiKey=${apiKey}`,
+  );
+};
+
 /* Global Notification
 ============================================================================ */
 class Notification {
@@ -340,7 +350,9 @@ class ImageViewer {
   }
 
   setCaption(img) {
-    // if (!img.metadata) return '';
+    const artefactIdentifier = `${globalData.inventoryNumber}_${globalData.idExtension}`;
+    const imageIdentifier = img.id.replace(`${artefactIdentifier}_`, '');
+    setMetadata(artefactIdentifier, imageIdentifier, globalData.metadataApiEndpoint, globalData.metadataApiKey);
     const { metadata } = img;
     const { translations } = globalData;
     const { langCode } = globalData;
@@ -356,8 +368,11 @@ class ImageViewer {
 
     const getCompleteImageData = (data) => {
       const rows = data.map((item) => `
-            <tr><td class="info-table__title">${item.name}:</td><td class="info-table__data">${item.content}</td></tr>
-          `);
+        <tr>
+          <td class="info-table__title">${item.name}:</td>
+          <td class="info-table__data">${item.content}</td>
+        </tr>
+      `);
 
       return rows.length === 0 ? '' : `
         <div id="completeImageData" class="expandable-content">
@@ -409,7 +424,7 @@ class ImageViewer {
     const url = env.match(/development/) ? this.adaptUrl(initialUrl) : initialUrl;
 
     if (trigger) this.handleTrigger(trigger);
-    this.setCaption(img);
+    this.setCaption({ ...img, url });
     this.viewer.open(url);
   }
 
@@ -434,8 +449,6 @@ const expandReduce = (trigger, targetId) => {
   triggerElement.dataset.jsExpanded = triggerElement.dataset.jsExpanded !== 'true';
   storeUserInteraction(triggerElement, targetId);
 };
-
-
 
 /* Search Results in Local Storage
 ============================================================================ */
@@ -702,6 +715,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
       const element = target.closest('.js-switch-content');
       const { id } = element;
       switchableContentElements[id].switchContent();
+    }
+
+    if (target.closest('.js-toggle-metadata-drawer')) {
+      const element = document.getElementById('metadata-drawer');
+      element.classList.toggle('is-visible');
+    }
+
+    if (target.closest('.js-edit-metadata')) {
+      const element = target.closest('.js-edit-metadata');
+      const { id } = element;
+      console.log('Clicked to edit metadata', element, id);
     }
 
     if (target.closest('.js-expand-additional-content')) {

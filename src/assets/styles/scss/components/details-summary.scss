@@ -1,0 +1,24 @@
+details > summary {
+  list-style-type: none;
+
+  &::after {
+    display: inline-block;
+    padding: 0 $quad;
+    color: $accent-dark;
+    content: "expand_more";
+    font-family: $font-icons;
+    font-size: $m;
+    font-weight: $fw-bold;
+    transition: transform $tr-fast, background-color $tr-fast;
+    vertical-align: bottom;
+  }
+}
+
+details[open] > summary {
+  list-style-type: none;
+
+  &::after {
+    background-color: transparent;
+    transform: rotate(180deg);
+  }
+}

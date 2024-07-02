@@ -1,7 +1,17 @@
 # Cranach 11ty
 
 ## Autodeployments
-Bislang ist nur ein [automatisches Deployment für den internen Bereich](https://github.com/lucascranach/cranach-artefacts/actions) eingerichtet. Dieses wird gestartet, wenn ein commit aig den [Branch intern](https://github.com/lucascranach/cranach-artefacts/tree/intern) gemacht wird. Das Deployment geht dann in den [internen Bereich](http://lucascranach.org/intern/).
+Bislang ist nur ein [automatisches Deployment für den internen Bereich](https://github.com/lucascranach/cranach-artefacts/actions) eingerichtet. Dieses wird gestartet, wenn ein Commit auf den [Branch intern](https://github.com/lucascranach/cranach-artefacts/tree/intern) gemacht wird. Das Deployment geht dann in den [internen Bereich](http://lucascranach.org/intern/).
+
+## Umgebungsvariablen
+
+```env
+CACHE_FOLDER=.cache
+API_ENDPOINT=https://lucascranach.org/data-proxy/json-data.php
+API_KEY=****************
+METADATA_API_ENDPOINT=https://lucascranach.org/metadata/metadataForm.html
+METADATA_API_KEY=****************
+```
 
 ## Lokale Entwicklungsumgebung starten
 

@@ -98,6 +98,23 @@
   }
 }
 
+.is-editable-content {
+
+  &::after {
+    display: inline-block;
+    padding-right: $quad;
+    padding-left: $quad;
+    margin-left: $quad;
+    color: $accent-dark;
+    content: "edit";
+    font-family: $font-icons;
+    opacity: $op-medium;
+    transform-origin: center;
+    transition: all $tr-fast;
+    vertical-align: bottom;
+  }
+}
+
 .is-clipable-content {
 
   &::after {

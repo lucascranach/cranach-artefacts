@@ -32,6 +32,8 @@ const SIMILAR_TO = 'SIMILAR_TO';
 const BELONGS_TO = 'BELONGS_TO';
 const GRAPHIC = 'GRAPHIC';
 const PART_OF_WORK = 'PART_OF_WORK';
+const IDENTICAL_WATERMARK = 'IDENTICAL_WATERMARK';
+const ON_SAME_SHEET = 'ON_SAME_SHEET';
 
 const getImageStack = ({ content }) => JSON.stringify(content.images);
 const getimageBaseUrl = () => JSON.stringify(config.imageTiles);
@@ -74,6 +76,8 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
   const belongsTo = referencesSnippet.getReference(eleventy, data, langCode, BELONGS_TO);
   const graphic = referencesSnippet.getReference(eleventy, data, langCode, GRAPHIC);
   const partOfWork = referencesSnippet.getReference(eleventy, data, langCode, PART_OF_WORK, true);
+  const onSameSheet = referencesSnippet.getReference(eleventy, data, langCode, ON_SAME_SHEET);
+  const identicalWatermark = referencesSnippet.getReference(eleventy, data, langCode, IDENTICAL_WATERMARK);
   const imageDescriptionObjectInfo = imageDescriptionSnippet.getImageDescriptionObjectInfo(data);
   const citeCda = citeCdaSnippet.getCiteCDA(eleventy, data, langCode);
   const improveCdaSnippet = improveCda.getImproveCDA(eleventy, data, config, langCode);
@@ -153,6 +157,8 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
             ${similarTo}
             ${belongsTo}
             ${graphic}
+            ${onSameSheet}
+            ${identicalWatermark}
           </div>
         </section>
           <section class="final-words">

@@ -13,6 +13,9 @@ const exhibitonsSnippet = require('./exhibitons.11ty');
 const identificationSnippet = require('./identification.11ty');
 const sourcesSnippet = require('./sources.11ty');
 const additionalTextInformationSnippet = require('./additional-text-information.11ty');
+const referencesSnippet = require('./references.11ty');
+
+const PART_OF_SERIES = 'PART_OF_SERIES';
 
 const getLangCode = ({ content }) => content.metadata.langCode;
 
@@ -50,6 +53,8 @@ exports.getMasterData = (eleventy, pageData) => {
   const additionalTextInformation = additionalTextInformationSnippet.getAdditionalTextInformation(eleventy, data, langCode);
   const primarySources = sourcesSnippet.getPrimarySources(eleventy, data, langCode, true);
   const nonPrimarySources = sourcesSnippet.getNonPrimarySources(eleventy, data, langCode, true);
+  const partOfSeries = referencesSnippet.getReference(eleventy, data, langCode, PART_OF_SERIES);
+
 
   return `
     <section class="leporello-recog js-main-content">
@@ -74,6 +79,7 @@ exports.getMasterData = (eleventy, pageData) => {
             </div>
           </div>
           <div class="marginal-content">
+            ${partOfSeries}
             ${exhibitions}
             ${primarySources}
             ${nonPrimarySources}
