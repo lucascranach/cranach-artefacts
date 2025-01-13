@@ -18,8 +18,8 @@ const config = {
   "onlyDevObjects": false,
   "generateLiterature": true,
   "generateAuthors": false,
-  "generatePaintings": false,
-  "generateArchivals": false,
+  "generatePaintings": true,
+  "generateArchivals": true,
   "generateGraphicsVirtualObjects": true,
   "pathPrefix": {
     "external": "artefacts",
