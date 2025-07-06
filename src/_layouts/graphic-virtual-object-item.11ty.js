@@ -15,6 +15,63 @@ const getClientTranslations = () => JSON.stringify(this.getClientTranslations())
 const getLangCode = ({ content }) => content.metadata.langCode;
 const getDocumentTitle = ({ content }) => content.metadata.title;
 
+const editionMap = {
+  '': 'a)',
+  '0': 'a)',
+  '1': 'b)',
+  '2': 'c)',
+  '3': 'd)',
+  '4': 'e)',
+  '5': 'f)',
+  '6': 'g)',
+  '7': 'h)',
+  '8': 'i)',
+  '9': 'j)',
+  '10': 'k)',
+  '11': 'l)',
+  '12': 'm)',
+  '13': 'n)',
+  '14': 'o)',
+  '15': 'p)',
+  '16': 'q)',
+  '17': 'r)',
+  '18': 's)',
+  '19': 't)',
+  '20': 'u)',
+  '21': 'v)',
+  '22': 'w)',
+  '23': 'x)',
+  '24': 'y)',
+  '25': 'z)',
+  '26': 'unklar',
+  '100': 'a?)',
+  '101': 'b?)',
+  '102': 'c?)',
+  '103': 'd?)',
+  '104': 'e?)',
+  '105': 'f?)',
+  '106': 'g?)',
+  '107': 'h?)',
+  '108': 'i?)',
+  '109': 'j?)',
+  '110': 'k?)',
+  '111': 'l?)',
+  '112': 'm?)',
+  '113': 'n?)',
+  '114': 'o?)',
+  '115': 'p?)',
+  '116': 'q?)',
+  '117': 'r?)',
+  '118': 's?)',
+  '119': 't?)',
+  '120': 'u?)',
+  '121': 'v?)',
+  '122': 'w?)',
+  '123': 'x?)',
+  '124': 'y?)',
+  '125': 'z?)',  
+};
+
 const generateReprint = (eleventy, id, masterData, collections) => {
   const data = {
     content: eleventy.getReprintData(id, langCode),
@@ -41,7 +98,6 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
 
   const reprintsListData = [...content.references.reprints];
   const reprintsListRefData = reprintsListData.map((item) => eleventy.getReprintRefItem(item.inventoryNumber, langCode));
-
   const checkConditionLevel = (item) => {
     if (!item) return false;
     if (item.conditionLevel === conditionLevel) return true;
@@ -51,37 +107,39 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
   };
 
   const reprints = reprintsListRefData.filter(checkConditionLevel).sort((a, b) => a.sortingNumber.localeCompare(b.sortingNumber));
+
   const state = eleventy.translate(`${conditionLevel}-state`, langCode);
   const baseUrl = eleventy.getBaseUrl();
   const { masterData } = content;
 
   // condition = zustand, edition = auflage
   const editionsInCondition = [...(new Set(reprints.map((reprint) => reprint.editionNumber)))];
-  const editions = content.dating.historicEventInformations.filter(((event) => event.eventType === 'EDITION'));
-  const filteredEditions = editions.filter((edition) => editionsInCondition.indexOf(edition.editionNumber) > -1);
+  const editionDescriptions = content.dating.historicEventInformations.filter(((event) => event.eventType === 'EDITION'));
 
-  const editionsList = filteredEditions.map((edition) => {
-    let letter = edition.remarks.substring(0, edition.remarks.indexOf(' '));
-    if (letter.length !== 2) letter = '?)';
-    const description = edition.remarks.substring(edition.remarks.indexOf(' ') + 1);
-
-    const reprintsList = reprints.filter((reprint) => reprint.editionNumber === edition.editionNumber).map(
+  const editionsList = editionsInCondition.sort((a, b) => a - b).map((editionNumber) => {
+    const edition = editionDescriptions.find((event) => event.editionNumber === editionNumber);
+    const description = edition ? edition.remarks : '';
+    const reprintsList = reprints.filter((reprint) => reprint.editionNumber === editionNumber);
+    const reprintsListHtml = reprintsList.map(
       (item) => {
         generateReprint(eleventy, item.id, masterData, collections);
         const url = `${baseUrl}/${langCode}/${item.id}/`;
         const title = eleventy.altText(item.title);
+        const editionId = item.editionNumber ? editionMap[item.editionNumber] : '';
+        const editionTitle = item.editionNumber ? ` (${editionId})` : '';
+        const editionVisibleID = item.editionNumber ? ` ${editionTitle}` : '';
         const cardText = [];
         if (item.date) cardText.push(item.date);
         if (item.repository) cardText.push(item.repository);
 
         return `
-          <figure class="artefact-card">
+          <figure class="artefact-card" title="${item.id}">
             <a href="${url}" class="js-go-to-reprint">
               <div class="artefact-card__image-holder">
                 <img src="${item.imgSrc}" alt="${title}" loading="lazy">
               </div>
               <figcaption class="artefact-card__content">
-                <p class="artefact-card__text">${cardText.join(', ', cardText)} - ${item.editionNumber}</p>
+                <p class="artefact-card__text">${item.id}<br>${cardText.join(', ', cardText)}${editionVisibleID}</p>
               </figcaption>
             </a>
           </figure>
@@ -89,13 +147,16 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
       },
     );
 
+    const editionTitle = `${this.translate('edition', langCode)} ${editionMap[editionNumber.toString()]}`;
+    const editionDate = edition ? edition.text : '';
+
     return `
       <details style="">
-        <summary>${this.translate('edition', langCode)} ${letter}: ${edition.text}</summary>
+        <summary>${editionTitle} ${editionDate}</summary>
         <p>${description}</p>
       </details>
       <div class="reprints-gallery">
-        ${reprintsList.join('')}
+        ${reprintsListHtml.join('')}
       </div>
     `;
   });
@@ -144,6 +205,7 @@ exports.render = function (pageData) {
   const reprintsLevel3 = getReprints(this, data, 3);
   const reprintsLevel4 = getReprints(this, data, 4);
   const reprintsLevel5 = getReprints(this, data, 5);
+  const reprintsLevel100 = getReprints(this, data, 100);
   const navigation = navigationSnippet.getNavigation(this, langCode, id);
 
   const cranachCollectBaseUrl = this.getCranachCollectBaseUrl();
@@ -179,6 +241,7 @@ exports.render = function (pageData) {
           ${reprintsLevel3} <!-- Zustand 3 -->
           ${reprintsLevel4} <!-- Zustand 4 -->
           ${reprintsLevel5} <!-- Zustand 5 -->
+          ${reprintsLevel100} <!-- Einiziger Zustand -->
         </section>
           <section class="final-words">
           <div class="foldable-block text-block">
