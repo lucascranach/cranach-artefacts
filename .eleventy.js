@@ -15,11 +15,11 @@ const config = {
   "dist": "./docs",
   "compiledContent": "./compiled-content",
   "graphicPrefix": "GWN_",
-  "onlyDevObjects": false,
+  "onlyDevObjects": true,
   "generateLiterature": true,
   "generateAuthors": false,
-  "generatePaintings": true,
-  "generateArchivals": true,
+  "generatePaintings": false,
+  "generateArchivals": false,
   "generateDrawings": true,
   "generateGraphicsVirtualObjects": true,
   "pathPrefix": {
@@ -238,9 +238,9 @@ const appendToFile = (path, str) => {
 
 const getDrawingsCollection = (lang) => {
   const drawingsForLang = drawingsData[lang];
-  const devObjects = ['Z_US_NGA_2006-111-2', 'Z_US_MFAH_44-547'];
+  const devObjects = ['Z_DE_GNMN_Hz56'];
 
-  const drawings = config.onlyDevObjects === true || process.env.ELEVENTY_ENV === 'development'
+  const drawings = config.onlyDevObjects === true
     ? drawingsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
     : drawingsForLang.items;
   
@@ -260,7 +260,7 @@ const getPaintingsCollection = (lang) => {
   const paintingsForLang = paintingsData[lang];
   const devObjects = ["DE_NJ_NONE-NJ001a", "DE_KAZW_NONE-KAZW001A"];
 
-  const paintings = config.onlyDevObjects === true || process.env.ELEVENTY_ENV === 'development'
+  const paintings = config.onlyDevObjects === true 
     ? paintingsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
     : paintingsForLang.items;
   
@@ -280,7 +280,7 @@ const getLiteratureCollection = (lang) => {
   const literatureForLang = literatureData[lang];
   const devObjects = ["27884","30317","27765", "466", "136", "29373", "29998", "27655", "160"];
 
-  const literature = config.onlyDevObjects === true || process.env.ELEVENTY_ENV === 'development'
+  const literature = config.onlyDevObjects === true
     ? literatureForLang.items.filter(item => devObjects.includes(item.referenceId))
     : literatureForLang.items; //.filter(item => item.metadata.id == 30838 );
 
@@ -299,7 +299,7 @@ const getAuthorCollection = (lang) => {
   const literatureForLang = literatureData[lang];
   const devObjects = ["27765", "466", "29373"];
 
-  const literature = config.onlyDevObjects === true || process.env.ELEVENTY_ENV === 'development'
+  const literature = config.onlyDevObjects === true 
     ? literatureForLang.items.filter(item => devObjects.includes(item.referenceId))
     : literatureForLang.items; //.filter(item => item.metadata.id == 30838 );
 
@@ -372,9 +372,9 @@ const getGraphicsRealObjectsCollection = (lang) => {
 
 const getGraphicsVirtualObjectsCollection = (lang) => {
   const graphicsVirtualObjectsForLang = graphicsVirtualObjectData[lang];
-  const devObjects = ["LC_HVI-57_80", "LC_HVI-19-21_16", "LC_HVI-68_92", "LC_HVI-56_79"]; // , "ANO_H-NONE-022", "LC_HVI-9_8", "LC_HVI-19-21_18","MIB_H-NONE-001", "MIB_H-NONE-002"
+  const devObjects = ["LC_HVI-5_4","LC_HVI-12_3","LC_HVI-19-21_10","LC_HVI-22_24","LC_HVI-24_26","LC_HVI-29_30e", "LC_HVI-56_79"]; // , "ANO_H-NONE-022", "LC_HVI-9_8", "LC_HVI-19-21_18","MIB_H-NONE-001", "MIB_H-NONE-002",  "LC_HVI-57_80", "LC_HVI-19-21_16", "LC_HVI-68_92", "LC_HVI-56_79"
   
-  const graphicsVirtualObjects = config.onlyDevObjects === true || process.env.ELEVENTY_ENV === 'development'
+  const graphicsVirtualObjects = config.onlyDevObjects === true 
     ? graphicsVirtualObjectsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
     : graphicsVirtualObjectsForLang.items;
   const sortedGraphicsVirtualObjects = graphicsVirtualObjects.sort((a, b)=>{
