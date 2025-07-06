@@ -232,7 +232,7 @@
     "en": "Volume"
   },
   "edition": {
-    "de": "Ausgabe",
+    "de": "Auflage",
     "en": "Edition"
   },
   "publishEdition": {
@@ -562,6 +562,10 @@
   "10-state": {
     "de": "10. Zustand",
     "en": "10th State"
+  },
+  "100-state": {
+    "de": "Einziger Zustand",
+    "en": "Only State"
   },
   "zur-suche": {
     "de": "zur Suche",
