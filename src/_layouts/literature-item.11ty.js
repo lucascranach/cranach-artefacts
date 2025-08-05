@@ -193,7 +193,7 @@ exports.render = function (pageData) {
   return `<!doctype html> 
   <html lang="${langCode}">
     <head>
-      <title>cda :: ${this.translate('paintings', langCode)} :: ${documentTitle}</title>
+      <title>cda :: ${this.translate('literatureDocuments', langCode)} :: ${documentTitle}</title>
       ${metaDataHead}
       <link href="${this.url('/compiled-assets/main.css')}" rel="stylesheet">
       <link href="${this.url('/assets/images/favicon.svg')}" rel="icon" type="image/svg">

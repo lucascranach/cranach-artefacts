@@ -57,6 +57,9 @@ exports.render = function (pageData) {
 
   const { id } = data.content.metadata;
   const documentTitle = getDocumentTitle(data);
+  const truncatedDocumentTitle = documentTitle.length > 129 
+    ? documentTitle.substring(0, 126) + '…' 
+    : documentTitle;
   const header = getHeader(data);
   const imageStack = getImageStack(data);
   const baseUrl = this.getBaseUrl();
@@ -89,7 +92,7 @@ exports.render = function (pageData) {
   return `<!doctype html> 
   <html lang="${langCode}">
     <head>
-      <title>cda :: ${this.translate('paintings', langCode)} :: ${documentTitle}</title>
+      <title>cda :: ${this.translate('archivalDocuments', langCode)} :: ${truncatedDocumentTitle}</title>
       ${metaDataHead}
       <link href="${this.url('/compiled-assets/main.css')}" rel="stylesheet">
       <link href="${this.url('/assets/images/favicon.svg')}" rel="icon" type="image/svg">

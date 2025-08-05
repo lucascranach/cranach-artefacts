@@ -15,7 +15,7 @@ const config = {
   "dist": "./docs",
   "compiledContent": "./compiled-content",
   "graphicPrefix": "GWN_",
-  "onlyDevObjects": false,
+  "onlyDevObjects": true,
   "generateLiterature": true,
   "generateAuthors": false,
   "generatePaintings": true,
@@ -258,7 +258,7 @@ const getDrawingsCollection = (lang) => {
 
 const getPaintingsCollection = (lang) => {
   const paintingsForLang = paintingsData[lang];
-  const devObjects = ["DE_NJ_NONE-NJ001a", "DE_KAZW_NONE-KAZW001A"];
+  const devObjects = ["IT_GdU_1631","PRIVATE_NONE-P310", "DE_NJ_NONE-NJ001a", "DE_KAZW_NONE-KAZW001A"];
 
   const paintings = config.onlyDevObjects === true 
     ? paintingsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
@@ -344,7 +344,7 @@ const getAuthorCollection = (lang) => {
 
 const getArchivalsCollection = (lang) => {
   const archivalsForLang = archivalsData[lang];
-  const devObjects = ["PRIVATE_NONE-P409", "DE_ThHStAW_EGA_Reg-Bb_2746_17v"]; // , "DE_LHW_G25","ANO_H-NONE-019","DE_KSW_G9", "AT_KHM_GG885", "AT_KHM_GG861a","AT_KHM_GG861","AT_KHM_GG886","AT_KHM_GG856","AT_KHM_GG858","PRIVATE_NONE-P449","AR_MNdBABA_8632","AT_KHM_GG860","AT_KHM_GG885","AT_KHM_GG3523","PRIVATE_NONE-P443","PRIVATE_NONE-P450","AT_SZ_SZ25-416-129","CZ_NGP_O9619","CH_PTSS-MAS_A653","CH_SORW_1925-1b","DE_AGGD_15","DE_StMB_NONE-001c","AT_KHM_GG6905", "DE_StMT","DE_StMB_NONE-001d", "AT_KHM_GG6739"
+  const devObjects = ["DE_StA_Kronach_G-3_fol-112v-244r", "DE_ThHStAW_EGA_Reg-L_768-786_1_27r", "DE_ThHStAW_EGA_Reg-L_768-786_1_27r", "DE_ThHStAW_EGA_Reg-L_fol_287-296_26r", "DE_ThHStAW_EGA_Reg-L_fol_287-296_29r", "DE_ThHStAW_EGA_Reg-L_fol_768-786_23r", "DE_ThHStAW_EGA_Reg-L_fol_768-786_32r", "DE_ThHStAW_EGA_Reg-L_fol_768-786_40r", "PRIVATE_NONE-P409", "DE_ThHStAW_EGA_Reg-Bb_2746_17v"]; // , "DE_LHW_G25","ANO_H-NONE-019","DE_KSW_G9", "AT_KHM_GG885", "AT_KHM_GG861a","AT_KHM_GG861","AT_KHM_GG886","AT_KHM_GG856","AT_KHM_GG858","PRIVATE_NONE-P449","AR_MNdBABA_8632","AT_KHM_GG860","AT_KHM_GG885","AT_KHM_GG3523","PRIVATE_NONE-P443","PRIVATE_NONE-P450","AT_SZ_SZ25-416-129","CZ_NGP_O9619","CH_PTSS-MAS_A653","CH_SORW_1925-1b","DE_AGGD_15","DE_StMB_NONE-001c","AT_KHM_GG6905", "DE_StMT","DE_StMB_NONE-001d", "AT_KHM_GG6739"
 
   const archivals = config.onlyDevObjects === true
     ? archivalsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
