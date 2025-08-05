@@ -1,6 +1,14 @@
 .survey {
   padding-bottom: $m;
 
+  p, h4{
+    margin-bottom: $xs;
+  }
+
+  &.has-separator::before{
+    display: none;
+  }
+
   &-title {
     padding-right: $xl;
     margin-top: 0;
@@ -61,5 +69,9 @@
 
   &-content{
     padding-right: $xl;
+  }
+
+  .markdown-it + .markdown-it{
+    margin-top: $xs;
   }
 }
