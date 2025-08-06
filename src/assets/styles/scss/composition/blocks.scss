@@ -46,6 +46,15 @@
     font-weight: $fw-light;
   }
 
+  &__count {
+    color: $darken-strong;
+    &::before {
+      margin-left: $quad;
+      color: $accent-secondary;
+      content: "#";
+    }
+  }
+
   .is-expand-trigger {
     position: relative;
 
