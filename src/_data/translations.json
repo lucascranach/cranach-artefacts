@@ -640,4 +640,9 @@
     "de": "Teil einer Serie",
     "en": "Part of series"
   }
+  ,
+  "SHOW_ALL":{ 
+    "de": "Alle anzeigen",
+    "en": "Show all"
+  }
 }

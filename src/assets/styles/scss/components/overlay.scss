@@ -1,0 +1,113 @@
+.overlay {
+  display: flex;
+  width: var(--overlay-width);
+  height: var(--overlay-height);
+  max-height: var(--overlay-max-height);  
+  flex-direction: column;
+  padding: var(--responsive-padding-top-inner) var(--responsive-padding-right-left) var(--responsive-padding-bottom-inner);
+  border: none;
+  box-shadow: 0 0 0 100vw rgba(0, 0, 0, 0);
+  opacity: 0;
+  transition: opacity $tr-fast, box-shadow $tr-fast;
+
+  &[open] {
+    box-shadow: 0 0 0 100vw  $darken-strongest;
+    opacity: 1;
+  }
+
+  &.overlay--closing {
+    box-shadow: 0 0 0 100vw rgba(0, 0, 0, 0);
+    opacity: 0;
+  }
+}
+
+.overlay__grid {
+  display: grid;  
+  gap: $half;
+  grid-template-columns: repeat(auto-fill,minmax(27em,1fr));
+
+}
+
+.overlay__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $m;
+
+  h2 {
+    margin: 0;
+    font-size: $l;
+    font-weight: $fw-semibold;
+  }
+
+  .overlay__close {
+    position: relative;
+    top: 0;
+    right: 0;
+    align-self: flex-end;
+    padding: 0;
+
+    &::after {
+      color: $accent;
+      content: "close";
+      cursor: pointer;
+      font-family: MaterialIcons, sans-serif;
+    }  
+  }
+
+}
+
+.overlay__item {
+  margin: 0;
+
+  a {
+    display: flex;
+    height: 100%;
+    border-bottom: $border-stroke-weight-s solid $accent;
+
+  }
+  
+  figure {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    padding: $l $s;
+    margin: 0;
+    background-color: $lighter;
+    gap: $m;
+    transition: background-color $tr-medium;
+
+    &:hover {
+      background-color: $light;
+    }
+
+    figcaption {
+      h3, h4, p {
+        margin: 0 0 $quad 0;
+        font-size: $m;
+      }
+
+      p:last-child {
+        margin-bottom: 0;
+      }
+
+      h3 {
+        font-weight: $fw-semibold;
+      }
+
+      h4, p {
+        font-weight: $fw-light;
+      }
+    }
+
+    img {
+      width: 8em;
+      height: 8em;
+      flex-shrink: 0;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+    }
+
+  }
+}
