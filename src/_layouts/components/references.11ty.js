@@ -30,7 +30,7 @@ exports.getReference = (eleventy, data, langCode, type, isOpen = false) => {
   const overallOverview = type === 'PART_OF_WORK' ? overallOverviewSnippet.getOverallOverview(eleventy, data, langCode) : '';
 
   const getTypeContent = (refType) => {
-    const maxContentItems = 3;
+    const maxContentItems = 4;
     const baseUrl = eleventy.getBaseUrl();
     let typeContentItemsOverlay = null;
     let typeContentItems = !references ? [] : references.filter((item) => item.kind === refType);
