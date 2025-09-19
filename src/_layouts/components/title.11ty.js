@@ -18,6 +18,3 @@ exports.getTitle = (eleventy, { content }, langCode) => {
     ${allTitles}
   `;
 };
-
-
-
