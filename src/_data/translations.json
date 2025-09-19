@@ -515,6 +515,10 @@
     "de": "Bartsch-Nr.",
     "en": "Bartsch-No"
   },
+  "gnd": {
+    "de": "GND-Nr.",
+    "en": "GND-No"
+  },
   "impressions": {
     "de": "Abzüge",
     "en": "Impressions"
