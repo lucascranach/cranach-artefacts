@@ -91,25 +91,25 @@
     "de": "Signatur / Datierung",
     "en": "Signature / Dating"
   },
-  "inscriptions": {
-    "de": "Inschriften",
-    "en": "Inscriptions"
-  },
   "inscriptionsInnerHeadline": {
     "de": "Inschriften, Wappen",
     "en": "Inscriptions, Badges"
   },
   "inscriptionsOuterHeadline": {
-    "de": "Inschriften und Beschriftungen",
-    "en": "Inscriptions and Labels"
+    "de": "Inschriften",
+    "en": "Inscriptions"
   },
   "stamps": {
     "de": "Stempel, Siegel, Beschriftungen",
     "en": "Stamps, Seals, Labels"
   },
   "labelsInnerHeadline": {
-    "de": "Stempel, Siegel, Beschriftungen",
-    "en": "Stamps, Seals, Labels"
+    "de": "spätere Beschriftungen, Stempel, Siegel",
+    "en": "later inscription, stamps, seals, labels"
+  },
+  "labelsOuterHeadline": {
+    "de": "Beschriftungen",
+    "en": "Labels"
   },
   "shortDescription": {
     "de": "Kurzbeschreibung",

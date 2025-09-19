@@ -82,7 +82,8 @@ exports.render = function (pageData) {
   const attribution = attributionSnippet.getAttribution(this, data, langCode);
   const location = locationSnippet.getLocation(this, data, langCode);
   const signature = signatureSnippet.getSignature(this, data, langCode);
-  const inscriptionsAndLabels = inscriptionsAndLabelsSnippet.getInscriptionsAndLabels(this, data, langCode);
+  const inscriptions = inscriptionsAndLabelsSnippet.getInscriptions(this, data, langCode);
+  const labels = inscriptionsAndLabelsSnippet.getLabels(this, data, langCode);
   const ids = identificationSnippet.getIds(this, data, langCode);
   const exhibitions = exhibitonsSnippet.getExhibitions(this, data, langCode);
   const provenance = provenanceSnippet.getProvenance(this, data, langCode);
@@ -156,7 +157,8 @@ exports.render = function (pageData) {
                   ${dating}
                   ${dimensions}
                   ${signature}
-                  ${inscriptionsAndLabels}
+                  ${inscriptions}
+                  ${labels}
                 </div>
                 <div class="block">
                   ${location}
