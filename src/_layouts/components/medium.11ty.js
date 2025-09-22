@@ -12,7 +12,7 @@ exports.getMediumOfPainting = (eleventy, { content }, langCode) => {
     title: label,
     context: prefix,
   };
-  const mediumTable = hasAdditionalContent ? eleventy.getRemarkDataTable(remarkDataTableData) : '';
+  const mediumTable = hasAdditionalContent ? eleventy.getRemarkDataTable(remarkDataTableData, 'full', false) : '';
   return !medium ? '' : `
     <div class="has-tight-separator">
       <div id="${prefix}-subtitle">
@@ -37,7 +37,7 @@ exports.getMediumOfGraphic = (eleventy, { content }, langCode) => {
     title: label,
     context: prefix,
   };
-  const mediumTable = hasAdditionalContent ? eleventy.getRemarkDataTable(remarkDataTableData) : '';
+  const mediumTable = hasAdditionalContent ? eleventy.getRemarkDataTable(remarkDataTableData, 'full', false) : '';
   return !medium ? '' : `
     <dl id="${prefix}-mediumData" class="definition-list is-grid">
       <dt class="definition-list__term">${label}</dt>
