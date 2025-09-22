@@ -615,7 +615,7 @@ module.exports = function (eleventyConfig) {
     return connectedObjects.shift();
   });  
 
-  eleventyConfig.addJavaScriptFunction("getRemarkDataTable", (objectData, mode = 'full') => {
+  eleventyConfig.addJavaScriptFunction("getRemarkDataTable", (objectData, mode = 'full', asTable = true) => {
 
     const { content } = objectData;
     const { title } = objectData;
@@ -624,12 +624,23 @@ module.exports = function (eleventyConfig) {
     const { id } = objectData;
     const { additionalCellClass } = objectData;
 
+
+
     const rows = content.map(item => {
       if(!item.remark) return;
 
       const remarkData = item.remark.match(/\[(.*?)\]\((.*?)\)/) 
         ? item.remark.replace(/\[(.*?)\]\((.*?)\)/g, '<a class="link-to-source" href="$2">[$1]</a>') 
         : item.remark;
+
+      if (asTable === false) { 
+        if (!item.remark) return '';
+        return ` 
+          <p>${item.text}</p>
+          ${markdownify(remarkData, mode)}
+        ` 
+      }
+         
       const remark = item.remark ? `<td class="info-table__remark">${markdownify(remarkData, mode)}</td>` : '<td class="info-table__remark">-</td>';
 
       return `
@@ -642,9 +653,7 @@ module.exports = function (eleventyConfig) {
         class="additional-content js-additional-content"
         data-is-additional-content-to="${isAdditionalContentTo}">
         <h2 class="additional-content__title js-collapse-additional-content has-interaction">${title}</h2>
-        <table class="info-table additional-content__table">
-          ${rows.join("")}
-        </table>
+        ${asTable === true ? `<table class="info-table additional-content__table">${rows.join("")}</table>` : rows.join("")}
       </div>
     `;
   });
