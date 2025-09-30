@@ -43,14 +43,27 @@ exports.getIds = (eleventy, { content }, langCode) => {
     <dt class="definition-list__term">${eleventy.translate('kkl', langCode)}</dt>
     <dd class="definition-list__definition">${kklNr}${linkToKklGroup}</dd>
   `;
+
   const bartschData = content.catalogWorkReferences
     ? content.catalogWorkReferences.filter((item) => item.description === 'Bartsch')
     : false;
+
   const bartschNr = bartschData[0] ? bartschData[0].referenceNumber : false;
   const bartschNrSnippet = !bartschNr ? ''
     : `
     <dt class="definition-list__term">${eleventy.translate('bartsch', langCode)}</dt>
     <dd class="definition-list__definition" data-clipable-content="${bartschNr}">${bartschNr}</dd>
+  `;
+
+  const gndData = content.catalogWorkReferences
+    ? content.catalogWorkReferences.filter((item) => item.description === 'GND')
+    : false;
+
+  const gndNr = gndData[0] ? gndData[0].referenceNumber : false;
+  const gndNrSnippet = !gndNr ? ''
+    : `
+    <dt class="definition-list__term">${eleventy.translate('gnd', langCode)}</dt>
+    <dd class="definition-list__definition" data-clipable-content="${gndNr}">${gndNr}</dd>
   `;
 
   const frNr = content.objectName ? content.objectName : false;
@@ -68,6 +81,7 @@ exports.getIds = (eleventy, { content }, langCode) => {
     ${kklNrSnippet}
     ${hollsteinNrSnippet}
     ${bartschNrSnippet}
+    ${gndNrSnippet}
     <dt class="definition-list__term">${eleventy.translate('permalink', langCode)}</dt>
     <dd class="definition-list__definition" data-clipable-content="${content.url}"><a href="${content.url}">${content.url}</a></dd>
   </dl>
