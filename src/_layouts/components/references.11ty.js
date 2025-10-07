@@ -18,26 +18,6 @@ const getReferences = (eleventy, content, type) => {
   // if (type === 'IDENTICAL_WATERMARK') return content.references.watermark;
   // if (type === 'ON_SAME_SHEET') return content.references.sameSheet;
   return content.references.relatedWorks;
-};
-
-const getReferences = (eleventy, content, type) => {
-  // const { entityType } = content;
-
-  const referenceTypes = eleventy.getReferenceTypes();
-  const { references } = content;
-
-  if(!references) return;
-  if(!referenceTypes[type]) return;
-  const referenceType = referenceTypes[type];
-
-  if(!references[referenceType]) return;
-  return references[referenceType];
-
-  // if (entityType === 'paintings') return content.references;
-  // if (entityType === 'drawings') return Object.values(content.references).flat();
-  // if (type === 'IDENTICAL_WATERMARK') return content.references.watermark;
-  // if (type === 'ON_SAME_SHEET') return content.references.sameSheet;
-  return content.references.relatedWorks;
 }
 
 exports.getReference = (eleventy, data, langCode, type, isOpen = false) => {
