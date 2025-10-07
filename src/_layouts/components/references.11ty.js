@@ -1,7 +1,24 @@
 const overallOverviewSnippet = require('./overall-overview.11ty');
 
-// const { references } = content;
+const getReferences = (eleventy, content, type) => {
+  // const { entityType } = content;
 
+  const referenceTypes = eleventy.getReferenceTypes();
+  const { references } = content;
+
+  if(!references) return;
+  if(!referenceTypes[type]) return;
+  const referenceType = referenceTypes[type];
+
+  if(!references[referenceType]) return;
+  return references[referenceType];
+
+  // if (entityType === 'paintings') return content.references;
+  // if (entityType === 'drawings') return Object.values(content.references).flat();
+  // if (type === 'IDENTICAL_WATERMARK') return content.references.watermark;
+  // if (type === 'ON_SAME_SHEET') return content.references.sameSheet;
+  return content.references.relatedWorks;
+};
 
 const getReferences = (eleventy, content, type) => {
   // const { entityType } = content;
@@ -25,10 +42,9 @@ const getReferences = (eleventy, content, type) => {
 
 exports.getReference = (eleventy, data, langCode, type, isOpen = false) => {
   const { content } = data;
-
   const references = getReferences(eleventy, content, type);
   const overallOverview = type === 'PART_OF_WORK' ? overallOverviewSnippet.getOverallOverview(eleventy, data, langCode) : '';
-
+  
   const getTypeContent = (refType) => {
     const baseUrl = eleventy.getBaseUrl();
     const typeContentItems = !references ? [] : references.filter((item) => item.kind === refType);
