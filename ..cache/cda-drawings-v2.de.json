@@ -1,0 +1,360 @@
+{
+    "items": [
+        {
+            "images": {},
+            "documents": {},
+            "metadata": {
+                "entityType": "DRAWING",
+                "langCode": "de",
+                "id": "Z_US_MFAH_44-547",
+                "title": "Adam und Eva",
+                "subtitle": "",
+                "date": "nach 1549",
+                "additionalInfos": [
+                    "Zeichnung",
+                    "Blattmaß: 210 × 165 mm\nPassepartout: 230 × 171 mm\n[MFA Houston online, accessed 23.07.2024](https:\/\/emuseum.mfah.org\/objects\/46250\/the-fall-of-man?ctx=591c7c502c586a4bb0b4ead3e18f2b59a4626824&idx=0)"
+                ],
+                "classification": "Zeichnung",
+                "imgSrc": "",
+                "isPublished": false
+            },
+            "involvedPersons": [
+                {
+                    "displayOrder": 1,
+                    "id": "attribution.lucas_cranach_the_younger",
+                    "role": "Künstler*in",
+                    "roleType": "ARTIST",
+                    "name": "Lucas Cranach der Jüngere",
+                    "prefix": "",
+                    "suffix": "",
+                    "nameType": "Primärer Name",
+                    "alternativeName": "Lucas Cranach der Jüngere",
+                    "remarks": "[MFA Houston online, accessed 23.07.2024](https:\/\/emuseum.mfah.org\/objects\/46250\/the-fall-of-man?ctx=591c7c502c586a4bb0b4ead3e18f2b59a4626824&idx=0) \n[Exhib. Cat. Wittenberg 2015, 272, no. 2.28]",
+                    "date": "",
+                    "isUnknown": false
+                }
+            ],
+            "involvedPersonsNames": [
+                {
+                    "constituentId": "32402",
+                    "details": [
+                        {
+                            "name": "Lucas Cranach der Jüngere",
+                            "nameType": "Primärer Name"
+                        },
+                        {
+                            "name": "Lucas Cranach the Younger",
+                            "nameType": "Alternativer Name"
+                        }
+                    ]
+                }
+            ],
+            "titles": [
+                {
+                    "type": "Titel",
+                    "title": "Adam und Eva",
+                    "remarks": "[cda 2026]"
+                },
+                {
+                    "type": "Titel",
+                    "title": "Sündenfall",
+                    "remarks": "[Exhib. Cat. Wittenberg 2015, 272, no. 2.28]"
+                }
+            ],
+            "classification": {
+                "classification": "Zeichnung"
+            },
+            "objectName": "",
+            "inventoryNumber": "Z_US_MFAH_44-547",
+            "objectId": 1073409,
+            "dimensions": "Blattmaß: 210 × 165 mm\nPassepartout: 230 × 171 mm\n[MFA Houston online, accessed 23.07.2024](https:\/\/emuseum.mfah.org\/objects\/46250\/the-fall-of-man?ctx=591c7c502c586a4bb0b4ead3e18f2b59a4626824&idx=0)",
+            "dating": {
+                "dated": "nach 1549",
+                "begin": 1549,
+                "end": 1559,
+                "remarks": "[MFA Houston online, accessed 23.07.2024](https:\/\/emuseum.mfah.org\/objects\/46250\/the-fall-of-man?ctx=591c7c502c586a4bb0b4ead3e18f2b59a4626824&idx=0)",
+                "historicEventInformations": [
+                    {
+                        "eventType": "DATING",
+                        "editionNumber": 0,
+                        "text": "um 1549",
+                        "begin": 1547,
+                        "end": 1555,
+                        "remarks": "[Exhib. Cat. Wittenberg 2015, 272, no. 2.28]"
+                    }
+                ],
+                "isDated": false
+            },
+            "description": "Adam und Eva stehen auf einem Hügel zu Seiten des Baumes der Erkenntnis. Die Schlange blickt über einer Astgabel hängend auf Eva herab, die in ihrer linken Hand die verbotene Frucht hält und dabei ist, sie Adam zu reichen. Beide bedecken ihre Scham mit einem Zweig. Im Hintergrund erstreckt sich eine hügelige Waldlandschaft mit Rotwild, Wildschweinen, Hasen, Pfauen und Schwänen.\n[vgl. Exhib. Cat. Wittenberg 2015, 272, no. 2.28]",
+            "provenance": "- [Vitale Bloch, Berlin, 1929]\n- erworbern von Percy S. Straus, 04.06.1929\n- 1944 dem Museum of Fine Arts, Houston vermacht\n[MFA Houston online, accessed 23.07.2024](https:\/\/emuseum.mfah.org\/objects\/46250\/the-fall-of-man?ctx=591c7c502c586a4bb0b4ead3e18f2b59a4626824&idx=0)",
+            "medium": "Feder, schwarze und braune Tinte, schwarz laviert auf Büttenpapier\n[MFA Houston online, accessed 23.07.2024](https:\/\/emuseum.mfah.org\/objects\/46250\/the-fall-of-man?ctx=591c7c502c586a4bb0b4ead3e18f2b59a4626824&idx=0)",
+            "signature": "keine",
+            "inscription": "",
+            "markings": "Inschrift am unteren Bildrand: \"Pinxit hoc Lucas, Lucae Cranachij filius, Ducum Saxonie quondam pictor\" (Dies hat Lucas gemalt, Sohn des Lucas Cranach, der sächsischen Fürten einstiger Maler)\n[Exhib. Cat. Wittenberg 2015, 272, no. 2.28]",
+            "relatedWorks": "Vergleich mit CDA.US_MFAH_44-546",
+            "exhibitionHistory": "Wittenberg 2015, Nr. 2.28\nHouston 2017\/2018, \"Passion for Perfection: The Straus Collection of Renaissance Art,\" (kein Katalog?)",
+            "bibliography": "",
+            "references": {
+                "relatedInContentTo": [
+                    {
+                        "text": "Version",
+                        "kind": "RELATED_IN_CONTENT_TO",
+                        "inventoryNumberPrefix": "",
+                        "inventoryNumber": "US_MFAH_44-546",
+                        "remarks": []
+                    }
+                ],
+                "similarTo": [],
+                "belongsTo": [],
+                "partOfWork": [],
+                "counterpartTo": [],
+                "graphic": []
+            },
+            "secondaryReferences": [],
+            "additionalTextInformation": [
+                {
+                    "type": "Beschreibung\/ Interpretation\/ Kommentare",
+                    "text": "Diese biblische Szene aus der Genesis wurde in der Renaissance häufig dargestellt. Lucas Cranach der Jüngere wurde zweifellos von Albrecht Dürers bekanntem Kupferstich von Adam und Eva beeinflusst, in dem die Figuren einen zentral platzierten Baum der Erkenntnis flankieren, der von der bösen Schlange umschlungen wird. Die Zeichnung ist vollständig ausgearbeitet, was darauf hindeutet, dass sie nicht zur Vorbereitung des Gemäldes von Cranach d. J. mit demselben Thema in der Sammlung Straus, sondern zu einem anderen Zweck angefertigt wurde.\n\n[Dena M. Woodall, MFA Houston online, accessed 23.07.2024](https:\/\/emuseum.mfah.org\/catalogues\/straus-collection\/objects\/46250\/the-fall-of-man?ctx=602a9924840a2f8a384b9dce186ac9a9c2e41131&idx=10)",
+                    "date": "",
+                    "year": 2024,
+                    "author": ""
+                },
+                {
+                    "type": "Beschreibung\/ Interpretation\/ Kommentare",
+                    "text": "\"Die klare Linienführung der Zeichnung ohne Reuestriche und Korrekturen legt nahe, dass hier keine Entwurfszeichnung vorliegt. [...] Durch die Inschrift erhält die Federzeichnung zweifellos repräsentativen Charakter, der über die Nutzung innerhalb der Arbeitsprozesse der Werkstatt hinausgeht.\"\n\n[Exhib. Cat. Wittenberg 2015, 272, no. 2.28]",
+                    "date": "",
+                    "year": 2015,
+                    "author": ""
+                }
+            ],
+            "publications": [
+                {
+                    "title": "Exhib. Cat. Wittenb 2015 B",
+                    "pageNumber": "272",
+                    "referenceId": "29253"
+                },
+                {
+                    "title": "Exhib. Cat. Wittenb 2015 C",
+                    "pageNumber": "",
+                    "referenceId": "31265"
+                },
+                {
+                    "title": "Scharf 1929",
+                    "pageNumber": "",
+                    "referenceId": "1744"
+                },
+                {
+                    "title": "Wilson 1999",
+                    "pageNumber": "",
+                    "referenceId": "28228"
+                }
+            ],
+            "keywords": [
+                {
+                    "type": "Schlagwort",
+                    "term": "010403010101",
+                    "path": "Authorities > Attributes > Objekte > Cranach-Archiv > Inhalt > Christliche Religion \/ Bibel > Altes Testament > Genesis > Adam und Eva",
+                    "url": ""
+                },
+                {
+                    "type": "Schlagwort",
+                    "term": "010501",
+                    "path": "Authorities > Attributes > Objekte > Cranach-Archiv > Technik > Zeichnung",
+                    "url": ""
+                }
+            ],
+            "locations": [
+                {
+                    "type": "Standort Cranach Objekt",
+                    "term": "Houston",
+                    "path": "United States > states > Missouri > counties > Texas > inhabited places > Houston",
+                    "url": "http:\/\/vocab.getty.edu\/page\/tgn\/2059134",
+                    "geoPosition": {
+                        "lat": "37.3167",
+                        "lng": "-91.95"
+                    }
+                }
+            ],
+            "repository": "Museum of Fine Arts, Houston",
+            "owner": "Museum of Fine Arts, Houston",
+            "collectionRepositoryId": "collection_repository.country.america.houston.houston_1",
+            "sortingNumber": "",
+            "catalogWorkReferences": [
+                {
+                    "description": "Inventarnummer",
+                    "referenceNumber": "44.547",
+                    "remarks": ""
+                }
+            ],
+            "structuredDimension": {
+                "element": "",
+                "width": null,
+                "height": null
+            },
+            "isBestOf": false,
+            "restorationSurveys": [],
+            "searchSortingNumber": "3000"
+        },
+        {
+            "images": {},
+            "documents": {},
+            "metadata": {
+                "entityType": "DRAWING",
+                "langCode": "de",
+                "id": "Z_US_NGA_2006-111-2",
+                "title": "Herkules und Atlas",
+                "subtitle": "",
+                "date": "um 1530",
+                "additionalInfos": [
+                    "Zeichnung",
+                    "Blatt: 138 x 205 mm\n[NGA Washington online, accessed 23.07.2024](https:\/\/www.nga.gov\/collection\/art-object-page.106369.html)"
+                ],
+                "classification": "Zeichnung",
+                "imgSrc": "",
+                "isPublished": false
+            },
+            "involvedPersons": [
+                {
+                    "displayOrder": 1,
+                    "id": "attribution.lucas_cranach_the_elder",
+                    "role": "Künstler*in",
+                    "roleType": "ARTIST",
+                    "name": "Lucas Cranach der Ältere",
+                    "prefix": "",
+                    "suffix": "",
+                    "nameType": "Primärer Name",
+                    "alternativeName": "Lucas Cranach der Ältere",
+                    "remarks": "[NGA Washington online, accessed 23.07.2024](https:\/\/www.nga.gov\/collection\/art-object-page.106369.html);  [Exhib. Cat. Brussels 2010, no. 119]",
+                    "date": "",
+                    "isUnknown": false
+                }
+            ],
+            "involvedPersonsNames": [
+                {
+                    "constituentId": "32400",
+                    "details": [
+                        {
+                            "name": "Lucas Cranach der Ältere",
+                            "nameType": "Name eMuseum Kunstpalast"
+                        },
+                        {
+                            "name": "Lucas Cranach the Elder",
+                            "nameType": "Andere Suchform"
+                        },
+                        {
+                            "name": "Lucas Sunders",
+                            "nameType": "Falsche Namensform"
+                        },
+                        {
+                            "name": "Lukas Kranach",
+                            "nameType": ""
+                        }
+                    ]
+                }
+            ],
+            "titles": [
+                {
+                    "type": "Titel",
+                    "title": "Herkules und Atlas",
+                    "remarks": "[cda 2026]"
+                }
+            ],
+            "classification": {
+                "classification": "Zeichnung"
+            },
+            "objectName": "",
+            "inventoryNumber": "Z_US_NGA_2006-111-2",
+            "objectId": 1073412,
+            "dimensions": "Blatt: 138 x 205 mm\n[NGA Washington online, accessed 23.07.2024](https:\/\/www.nga.gov\/collection\/art-object-page.106369.html)",
+            "dating": {
+                "dated": "um 1530",
+                "begin": 1525,
+                "end": 1535,
+                "remarks": "[NGA Washington online, accessed 23.07.2024](https:\/\/www.nga.gov\/collection\/art-object-page.106369.html); [Exhib. Cat. Brussels 2010, no. 119]",
+                "historicEventInformations": [],
+                "isDated": false
+            },
+            "description": "Die Zeichnung zeigt Herkules, der im Beisein des Atlas dessen Himmelsglobus geschultert hat. Eine Flusslandschaft bildet den Hintergrund.\n[cda 2026]",
+            "provenance": "- J. Fairfax-Murray\n- Victor Koch (seine Auktion bei Anderson Galleries, New York, 8 Februar 1923, Los 70)\n- (Auktion, Sotheby's New York, 29 Januar 1997, Los 128, als \"German School, 16th century\")\n- Privatsammlung, Washington, DC\n- (Salamander Fine Arts, New York)\n- 2006 vom Museum erworben\n[NGA Washington online, accessed 23.07.2024](https:\/\/www.nga.gov\/collection\/art-object-page.106369.html)",
+            "medium": "Feder und schwarze Tinte über Pinsel und grau laviert über Kreide auf Büttenpapier\n[NGA Washington online, accessed 23.07.2024](https:\/\/www.nga.gov\/collection\/art-object-page.106369.html)",
+            "signature": "keine",
+            "inscription": "",
+            "markings": "Spätere Inschrift unten links, mit Graphit: \"Lucas Cranach\"\n[NGA Washington online, accessed 23.07.2024](https:\/\/www.nga.gov\/collection\/art-object-page.106369.html)",
+            "relatedWorks": "",
+            "exhibitionHistory": "Washington 2008, Nr. 10 \nBrüssel 2010, Nr. 119\nMailand 2018",
+            "bibliography": "",
+            "references": {
+                "relatedInContentTo": [],
+                "similarTo": [],
+                "belongsTo": [],
+                "partOfWork": [],
+                "counterpartTo": [],
+                "graphic": []
+            },
+            "secondaryReferences": [],
+            "additionalTextInformation": [],
+            "publications": [
+                {
+                    "title": "Exhib. Cat. Brussels 2010",
+                    "pageNumber": "215",
+                    "referenceId": "467"
+                },
+                {
+                    "title": "Exhib. Cat. Milan 2018",
+                    "pageNumber": "",
+                    "referenceId": "31266"
+                },
+                {
+                    "title": "Exhib. Cat. Washington 2008",
+                    "pageNumber": "",
+                    "referenceId": "31267"
+                }
+            ],
+            "keywords": [
+                {
+                    "type": "Schlagwort",
+                    "term": "0104050801",
+                    "path": "Authorities > Attributes > Objekte > Cranach-Archiv > Inhalt > Klassische Mythologie und antike Geschichte > Herkules > Die Taten des Herkules",
+                    "url": ""
+                },
+                {
+                    "type": "Schlagwort",
+                    "term": "010501",
+                    "path": "Authorities > Attributes > Objekte > Cranach-Archiv > Technik > Zeichnung",
+                    "url": ""
+                }
+            ],
+            "locations": [
+                {
+                    "type": "Standort Cranach Objekt",
+                    "term": "Washington",
+                    "path": "United States > districts (national) > District of Columbia > inhabited places > Washington",
+                    "url": "http:\/\/vocab.getty.edu\/page\/tgn\/7013962",
+                    "geoPosition": {
+                        "lat": "38.8833",
+                        "lng": "-77.0333"
+                    }
+                }
+            ],
+            "repository": "National Gallery of Art, Washington, D. C.",
+            "owner": "National Gallery of Art, Washington, D. C.",
+            "collectionRepositoryId": "collection_repository.country.america.washington",
+            "sortingNumber": "",
+            "catalogWorkReferences": [
+                {
+                    "description": "Inventarnummer",
+                    "referenceNumber": "2006.111.2",
+                    "remarks": ""
+                }
+            ],
+            "structuredDimension": {
+                "element": "",
+                "width": null,
+                "height": null
+            },
+            "isBestOf": false,
+            "restorationSurveys": [],
+            "searchSortingNumber": "3000"
+        }
+    ]
+}

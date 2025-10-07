@@ -3,7 +3,7 @@ let config;
 
 const metaDataHeader = require('./components/meta-data-head.11ty');
 const improveCda = require('./components/improve-cda.11ty');
-const pageDateSnippet = require('./components/page-date.11ty');
+// const pageDateSnippet = require('./components/page-date.11ty');
 const copyrightSnippet = require('./components/copyright.11ty');
 const citeCdaSnippet = require('./components/cite-cda.11ty');
 const titleSnippet = require('./components/title.11ty');
@@ -30,7 +30,7 @@ const getDocumentTitle = ({ content }) => content.metadata.title;
 const getHeader = (data) => {
   const title = titleSnippet.getTitle(this, data, langCode);
   const archival = this.translate('archival', langCode);
-  
+
   return `
   <header class="artefact-header">
     ${title}
@@ -57,6 +57,9 @@ exports.render = function (pageData) {
 
   const { id } = data.content.metadata;
   const documentTitle = getDocumentTitle(data);
+  const truncatedDocumentTitle = documentTitle.length > 129 
+    ? documentTitle.substring(0, 126) + '…' 
+    : documentTitle;
   const header = getHeader(data);
   const imageStack = getImageStack(data);
   const baseUrl = this.getBaseUrl();
@@ -80,7 +83,7 @@ exports.render = function (pageData) {
   const citeCda = citeCdaSnippet.getCiteCDA(this, data, langCode);
   const improveCdaSnippet = improveCda.getImproveCDA(this, data, config, langCode);
   const copyright = copyrightSnippet.getCopyright();
-  const pageDate = pageDateSnippet.getPageDate(this, langCode);
+  // const pageDate = pageDateSnippet.getPageDate(this, langCode);
   const navigation = navigationSnippet.getNavigation(this, langCode, id);
   const navigationObjects = JSON.stringify(this.getObjectsForNavigation(data.content.metadata.id));
   const transcription = transcriptionSnippet.getTranscription(this, data, langCode);
@@ -89,7 +92,7 @@ exports.render = function (pageData) {
   return `<!doctype html> 
   <html lang="${langCode}">
     <head>
-      <title>cda :: ${this.translate('paintings', langCode)} :: ${documentTitle}</title>
+      <title>cda :: ${this.translate('archivalDocuments', langCode)} :: ${truncatedDocumentTitle}</title>
       ${metaDataHead}
       <link href="${this.url('/compiled-assets/main.css')}" rel="stylesheet">
       <link href="${this.url('/assets/images/favicon.svg')}" rel="icon" type="image/svg">

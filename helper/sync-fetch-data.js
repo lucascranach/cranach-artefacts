@@ -7,7 +7,8 @@ const dataTypes = {
   'graphics-virtual': 'cda-graphics-v2.virtual',
   'literature': 'cda-literaturereferences-v2',
   'paintings': 'cda-paintings-v2',
-  'thesaurus': 'cda-thesaurus-v2'
+  'thesaurus': 'cda-thesaurus-v2',
+  'drawings': 'cda-drawings-v2',
 };
 
 const checkCacheFolder = (cacheFolder) => {

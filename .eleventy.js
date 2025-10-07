@@ -18,25 +18,33 @@ const config = {
   "onlyDevObjects": false,
   "generateLiterature": true,
   "generateAuthors": false,
-  "generatePaintings": false,
-  "generateArchivals": false,
+  "generatePaintings": true,
+  "generateArchivals": true,
+  "generateDrawings": true,
   "generateGraphicsVirtualObjects": true,
   "pathPrefix": {
     "external": "artefacts",
     "internal": "intern/artefacts",
+    "preview": "intern/artefacts-preview",
     "development": ""
   },
   "cranachCollect": {
     "baseUrl": {
       "development": "https://lucascranach.org/cranach-compare",
-      "production": "https://lucascranach.org/cranach-compare",
+      "production": "https://lucascranach.org/cranach-compare", // TODO: Check if it is still in use -> cn 20-08-2024: ja, wird noch verwendet
+      "external": "https://lucascranach.org/cranach-compare",
+      "internal": "https://lucascranach.org/cranach-compare",
+      "preview": "https://lucascranach.org/cranach-compare",
     },
     "script": "/scripts/cranach-collect.js",
     "frontend": "/index.html",
   },
   "imageTiles": {
     "development": "https://lucascranach.org/data-proxy/image-tiles.php?obj=",
-    "production": "https://lucascranach.org/imageserver-2022"
+    "production": "https://lucascranach.org/imageserver-2022", // TODO: Check if it is still in use
+    "external": "https://lucascranach.org/imageserver-2022",
+    "internal": "https://lucascranach.org/imageserver-2022",
+    "preview": "https://lucascranach.org/imageserver-2022",
   },
   "issueReportUrl": {
     "bug": "https://docs.google.com/forms/d/e/1FAIpQLSdtb8vAaRUZAZZUijLP099GFMm279HpbZBdVA5KZf5tnLZVCw/viewform?usp=pp_url&entry.810636170=artefactTitle&entry.1357028798=artefactUrl",
@@ -44,6 +52,7 @@ const config = {
   "cranachBaseUrl": {
     "external": "https://lucascranach.org",
     "internal": "https://lucascranach.org/intern/artefacts",
+    "preview": "https://lucascranach.org/intern/artefacts-preview",
     "development": "http://localhost:8080",
   },
   "cranachBaseUrlHomepage": {
@@ -53,6 +62,7 @@ const config = {
   "cranachSearchURL": {
     "external": "https://lucascranach.org/langCode/search",
     "internal": "https://lucascranach.org/langCode/intern/search/",
+    "preview": "https://lucascranach.org/langCode/intern/search-internal-preview/",
     "development": "http://localhost:8080"
   },
   "documentsBasePath": "https://lucascranach.org/documents",
@@ -149,6 +159,7 @@ const referenceTypes = {
   "IDENTICAL_WATERMARK": "identicalWatermark"
 };
 
+
 const paintingsData = {
   "de": fetchData({"lang":"de", "type":"paintings"}),
   "en": fetchData({"lang":"en", "type":"paintings"}),
@@ -173,6 +184,12 @@ const literatureData = {
   "de": fetchData({"lang":"de", "type":"literature"}),
   "en": fetchData({"lang":"en", "type":"literature"}),
 };
+
+const drawingsData = {
+  "de": fetchData({"lang":"de", "type":"drawings"}),
+  "en": fetchData({"lang":"en", "type":"drawings"}),
+};
+
 const translations = require("./src/_data/translations.json");
 const translationsClient = require("./src/_data/translations-client.json");
 
@@ -191,6 +208,11 @@ const simpleMarkdownItRenderer = new markdownIt('commonmark', {
 }).disable([ 'list' ]);
 
 const pathPrefix = config.pathPrefix[process.env.ELEVENTY_ENV];
+
+const showUnpublishedArtefacts = 
+  process.env.ELEVENTY_ENV === 'internal'
+  || process.env.ELEVENTY_ENV === 'preview'
+  || process.env.ELEVENTY_ENV === 'development';
 
 const markRemarks = str => {
   const mark = (match, str) => {
@@ -214,11 +236,31 @@ const appendToFile = (path, str) => {
   fs.appendFileSync(filepath, str);
 }
 
+const getDrawingsCollection = (lang) => {
+  const drawingsForLang = drawingsData[lang];
+  const devObjects = ['Z_DE_GNMN_Hz56'];
+
+  const drawings = config.onlyDevObjects === true
+    ? drawingsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
+    : drawingsForLang.items;
+  
+  let sortedDrawings = drawings.sort((a, b) => {
+    if (a.searchSortingNumber < b.searchSortingNumber) return -1;
+    if (a.searchSortingNumber > b.searchSortingNumber) return 1;
+    return 0;
+  });
+
+  if (showUnpublishedArtefacts) return sortedDrawings;
+
+  const publishedDrawings = sortedDrawings.filter(item => item.metadata.isPublished === true);
+  return publishedDrawings;
+}
+
 const getPaintingsCollection = (lang) => {
   const paintingsForLang = paintingsData[lang];
-  const devObjects = ["CH_SORW_1925-1b", "CH_SORW_1925-1a"];
+  const devObjects = ["IT_GdU_1631","PRIVATE_NONE-P310", "DE_NJ_NONE-NJ001a", "DE_KAZW_NONE-KAZW001A"];
 
-  const paintings = config.onlyDevObjects === true
+  const paintings = config.onlyDevObjects === true 
     ? paintingsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
     : paintingsForLang.items;
   
@@ -228,8 +270,7 @@ const getPaintingsCollection = (lang) => {
     return 0;
   });
 
-  if (process.env.ELEVENTY_ENV === 'internal'
-    || process.env.ELEVENTY_ENV === 'development') return sortedPaintings;
+  if (showUnpublishedArtefacts) return sortedPaintings;
 
   const publishedPaintings = sortedPaintings.filter(item => !item.sortingNumber.match(/^20/) && item.metadata.isPublished === true);
   return publishedPaintings;
@@ -249,8 +290,7 @@ const getLiteratureCollection = (lang) => {
     return 0;
   });
 
-  if (process.env.ELEVENTY_ENV === 'internal'
-    || process.env.ELEVENTY_ENV === 'development') return sortedLiterature;
+  if (showUnpublishedArtefacts) return sortedLiterature;
 
   return sortedLiterature;
 }
@@ -259,7 +299,7 @@ const getAuthorCollection = (lang) => {
   const literatureForLang = literatureData[lang];
   const devObjects = ["27765", "466", "29373"];
 
-  const literature = config.onlyDevObjects === true
+  const literature = config.onlyDevObjects === true 
     ? literatureForLang.items.filter(item => devObjects.includes(item.referenceId))
     : literatureForLang.items; //.filter(item => item.metadata.id == 30838 );
 
@@ -297,19 +337,18 @@ const getAuthorCollection = (lang) => {
     return 0;
   });
   
-  if (process.env.ELEVENTY_ENV === 'internal'
-    || process.env.ELEVENTY_ENV === 'development') return sortedAuthors;
+  if (showUnpublishedArtefacts) return sortedAuthors;
 
   return sortedAuthors;
 }
 
 const getArchivalsCollection = (lang) => {
   const archivalsForLang = archivalsData[lang];
-  const devObjects = ["PRIVATE_NONE-P409", "DE_ThHStAW_EGA_Reg-Bb_2746_17v"]; // , "DE_LHW_G25","ANO_H-NONE-019","DE_KSW_G9", "AT_KHM_GG885", "AT_KHM_GG861a","AT_KHM_GG861","AT_KHM_GG886","AT_KHM_GG856","AT_KHM_GG858","PRIVATE_NONE-P449","AR_MNdBABA_8632","AT_KHM_GG860","AT_KHM_GG885","AT_KHM_GG3523","PRIVATE_NONE-P443","PRIVATE_NONE-P450","AT_SZ_SZ25-416-129","CZ_NGP_O9619","CH_PTSS-MAS_A653","CH_SORW_1925-1b","DE_AGGD_15","DE_StMB_NONE-001c","AT_KHM_GG6905", "DE_StMT","DE_StMB_NONE-001d", "AT_KHM_GG6739"
+  const devObjects = ["DE_StA_Kronach_G-3_fol-112v-244r", "DE_ThHStAW_EGA_Reg-L_768-786_1_27r", "DE_ThHStAW_EGA_Reg-L_768-786_1_27r", "DE_ThHStAW_EGA_Reg-L_fol_287-296_26r", "DE_ThHStAW_EGA_Reg-L_fol_287-296_29r", "DE_ThHStAW_EGA_Reg-L_fol_768-786_23r", "DE_ThHStAW_EGA_Reg-L_fol_768-786_32r", "DE_ThHStAW_EGA_Reg-L_fol_768-786_40r", "PRIVATE_NONE-P409", "DE_ThHStAW_EGA_Reg-Bb_2746_17v"]; // , "DE_LHW_G25","ANO_H-NONE-019","DE_KSW_G9", "AT_KHM_GG885", "AT_KHM_GG861a","AT_KHM_GG861","AT_KHM_GG886","AT_KHM_GG856","AT_KHM_GG858","PRIVATE_NONE-P449","AR_MNdBABA_8632","AT_KHM_GG860","AT_KHM_GG885","AT_KHM_GG3523","PRIVATE_NONE-P443","PRIVATE_NONE-P450","AT_SZ_SZ25-416-129","CZ_NGP_O9619","CH_PTSS-MAS_A653","CH_SORW_1925-1b","DE_AGGD_15","DE_StMB_NONE-001c","AT_KHM_GG6905", "DE_StMT","DE_StMB_NONE-001d", "AT_KHM_GG6739"
 
   const archivals = config.onlyDevObjects === true
     ? archivalsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
-    : archivalsForLang.items;
+    : archivalsForLang.items.filter(item => item.metadata.isPublished === true);
   
   let sortedArchivals = archivals.sort((a, b) => {
     if (a.period < b.period) return -1;
@@ -333,9 +372,9 @@ const getGraphicsRealObjectsCollection = (lang) => {
 
 const getGraphicsVirtualObjectsCollection = (lang) => {
   const graphicsVirtualObjectsForLang = graphicsVirtualObjectData[lang];
-  const devObjects = ["LC_HVI-57_80", "LC_HVI-19-21_16", "LC_HVI-19-21_16", "LC_HVI-68_92"]; // , "ANO_H-NONE-022", "LC_HVI-9_8", "LC_HVI-19-21_18","MIB_H-NONE-001", "MIB_H-NONE-002"
+  const devObjects = ["LC_HVI-5_4","LC_HVI-12_3","LC_HVI-19-21_10","LC_HVI-22_24","LC_HVI-24_26","LC_HVI-29_30e", "LC_HVI-56_79"]; // , "ANO_H-NONE-022", "LC_HVI-9_8", "LC_HVI-19-21_18","MIB_H-NONE-001", "MIB_H-NONE-002",  "LC_HVI-57_80", "LC_HVI-19-21_16", "LC_HVI-68_92", "LC_HVI-56_79"
   
-  const graphicsVirtualObjects = config.onlyDevObjects === true
+  const graphicsVirtualObjects = config.onlyDevObjects === true 
     ? graphicsVirtualObjectsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
     : graphicsVirtualObjectsForLang.items;
   const sortedGraphicsVirtualObjects = graphicsVirtualObjects.sort((a, b)=>{
@@ -344,8 +383,11 @@ const getGraphicsVirtualObjectsCollection = (lang) => {
     return 0;
   });
 
-  if (process.env.ELEVENTY_ENV === 'internal'
-    || process.env.ELEVENTY_ENV === 'development') return sortedGraphicsVirtualObjects;
+  if (
+    process.env.ELEVENTY_ENV === 'internal'
+    || process.env.ELEVENTY_ENV === 'preview'
+    || process.env.ELEVENTY_ENV === 'development'
+  ) return sortedGraphicsVirtualObjects;
 
   return sortedGraphicsVirtualObjects.filter(item => item.metadata.imgSrc.match(/[a-z]/) && item.metadata.isPublished === true);
 }
@@ -449,7 +491,7 @@ module.exports = function (eleventyConfig) {
       return (translations[term]) ? translations[term][lang] : term;
     }
     if (!translations[term]) {
-      console.log(`Translation for ${term} in lang ${lang} is missing.`);
+      console.warn(`Translation for ${term} in lang ${lang} is missing.`);
       process.abort();
     }
     return translations[term][lang];
@@ -463,6 +505,10 @@ module.exports = function (eleventyConfig) {
     return {
       url, kklGroupId
     };
+  });
+
+  eleventyConfig.addJavaScriptFunction("getReferenceTypes", () => {
+    return referenceTypes
   });
 
   eleventyConfig.addJavaScriptFunction("checkRessource", async (url) => {
@@ -535,6 +581,7 @@ module.exports = function (eleventyConfig) {
       'title': reprintRefItem.metadata.title,
       'date': reprintRefItem.metadata.date,
       'conditionLevel': Number(reprintRefItem.conditionLevel),
+      'editionNumber': Number(reprintRefItem.editionNumber),
       'repository': reprintRefItem.repository,
       'sortingNumber': reprintRefItem.sortingNumber,
       'imgSrc': reprintRefItem.metadata.imgSrc,
@@ -583,7 +630,12 @@ module.exports = function (eleventyConfig) {
 
     const rows = content.map(item => {
       if(!item.remark) return;
-      const remark = item.remark ? `<td class="info-table__remark">${markdownify(item.remark, mode)}</td>` : '<td class="info-table__remark">-</td>';
+
+      const remarkData = item.remark.match(/\[(.*?)\]\((.*?)\)/) 
+        ? item.remark.replace(/\[(.*?)\]\((.*?)\)/g, '<a class="link-to-source" href="$2">[$1]</a>') 
+        : item.remark;
+      const remark = item.remark ? `<td class="info-table__remark">${markdownify(remarkData, mode)}</td>` : '<td class="info-table__remark">-</td>';
+
       return `
           <tr><td class="info-table__data ${additionalCellClass}">${item.text}</td>${remark}</tr>
         `;
@@ -679,7 +731,6 @@ module.exports = function (eleventyConfig) {
   });
 
   eleventyConfig.addJavaScriptFunction("log", ({ content }) => {
-    // console.log(`\nWorking on ${content.inventoryNumber}`);
   });
 
   eleventyConfig.addJavaScriptFunction("convertTagsInText", (str) => {
@@ -740,6 +791,24 @@ module.exports = function (eleventyConfig) {
 
   /* Collections
   ########################################################################## */
+
+  eleventyConfig.addCollection("drawingsDE", () => {
+    clearRequireCache();
+    const drawingsCollectionDE = config.generateDrawings === false
+      ? []
+      : getDrawingsCollection('de');
+  
+    return drawingsCollectionDE;
+  });
+
+  eleventyConfig.addCollection("drawingsEN", () => {
+    clearRequireCache();
+    const drawingsCollectionEN = config.generateDrawings === false
+      ? []
+      : getDrawingsCollection('en');
+  
+    return drawingsCollectionEN;
+  });
 
   eleventyConfig.addCollection("paintingsDE", () => {
     clearRequireCache();

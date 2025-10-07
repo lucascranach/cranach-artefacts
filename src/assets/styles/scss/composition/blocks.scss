@@ -29,6 +29,7 @@
   z-index: $level-content;
   background-color: $lightest;
 
+
   &.has-separator {
     padding-top: $s;
     border-top: solid $border-stroke-weight-s $darken-medium;
@@ -60,7 +61,7 @@
     &::after {
       position: absolute;
       right: 0;
-      bottom: $s;
+      top: -5px;
       display: flex;
       width: $xl;
       height: $xl;

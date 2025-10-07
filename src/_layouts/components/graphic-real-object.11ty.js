@@ -2,7 +2,7 @@ let config;
 
 const metaDataHeader = require('./meta-data-head.11ty');
 const improveCda = require('./improve-cda.11ty');
-const pageDateSnippet = require('./page-date.11ty');
+// const pageDateSnippet = require('./page-date.11ty');
 const copyrightSnippet = require('./copyright.11ty');
 const citeCdaSnippet = require('./cite-cda.11ty');
 const mediumSnippet = require('./medium.11ty');
@@ -83,7 +83,7 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
   const citeCda = citeCdaSnippet.getCiteCDA(eleventy, data, langCode);
   const improveCdaSnippet = improveCda.getImproveCDA(eleventy, data, config, langCode);
   const copyright = copyrightSnippet.getCopyright();
-  const pageDate = pageDateSnippet.getPageDate(eleventy, langCode);
+  // const pageDate = pageDateSnippet.getPageDate(eleventy, langCode);
   const condition = conditionSnippet.getCondition(eleventy, data, langCode);
   const medium = mediumSnippet.getMediumOfGraphic(eleventy, data, langCode);
   const shortDescription = descriptionSnippet.getShortDescription(eleventy, data, langCode);
