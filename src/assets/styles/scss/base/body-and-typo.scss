@@ -3,6 +3,10 @@
   transition: all $tr-fast;
 }
 
+@view-transition {
+  navigation: auto;
+}
+
 body {
   background-color: $lightest;
   color: $darkest;

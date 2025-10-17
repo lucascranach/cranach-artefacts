@@ -1,8 +1,5 @@
 const overallOverviewSnippet = require('./overall-overview.11ty');
 
-// const { references } = content;
-
-
 const getReferences = (eleventy, content, type) => {
   // const { entityType } = content;
 
@@ -25,10 +22,9 @@ const getReferences = (eleventy, content, type) => {
 
 exports.getReference = (eleventy, data, langCode, type, isOpen = false) => {
   const { content } = data;
-
   const references = getReferences(eleventy, content, type);
   const overallOverview = type === 'PART_OF_WORK' ? overallOverviewSnippet.getOverallOverview(eleventy, data, langCode) : '';
-
+  
   const getTypeContent = (refType) => {
     const baseUrl = eleventy.getBaseUrl();
     const typeContentItems = !references ? [] : references.filter((item) => item.kind === refType);

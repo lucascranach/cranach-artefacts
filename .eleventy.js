@@ -15,7 +15,7 @@ const config = {
   "dist": "./docs",
   "compiledContent": "./compiled-content",
   "graphicPrefix": "GWN_",
-  "onlyDevObjects": true,
+  "onlyDevObjects": false,
   "generateLiterature": true,
   "generateAuthors": false,
   "generatePaintings": true,
@@ -272,7 +272,7 @@ const getPaintingsCollection = (lang) => {
 
   if (showUnpublishedArtefacts) return sortedPaintings;
 
-  const publishedPaintings = sortedPaintings.filter(item => item.metadata.isPublished === true);
+  const publishedPaintings = sortedPaintings.filter(item => !item.sortingNumber.match(/^20/) && item.metadata.isPublished === true);
   return publishedPaintings;
 }
 
@@ -389,7 +389,7 @@ const getGraphicsVirtualObjectsCollection = (lang) => {
     || process.env.ELEVENTY_ENV === 'development'
   ) return sortedGraphicsVirtualObjects;
 
-  return sortedGraphicsVirtualObjects.filter(item => item.metadata.isPublished === true);
+  return sortedGraphicsVirtualObjects.filter(item => item.metadata.imgSrc.match(/[a-z]/) && item.metadata.isPublished === true);
 }
 
 const markdownify = (str, mode = 'full') => {
@@ -555,6 +555,10 @@ module.exports = function (eleventyConfig) {
     return process.env.ELEVENTY_ENV === 'developement'
       ? config.cranachCollect.baseUrl.developement
       : config.cranachCollect.baseUrl.production;
+  });
+
+  eleventyConfig.addJavaScriptFunction("getReferenceTypes", () => {
+    return referenceTypes
   });
 
   eleventyConfig.addJavaScriptFunction("getConfig", () => {

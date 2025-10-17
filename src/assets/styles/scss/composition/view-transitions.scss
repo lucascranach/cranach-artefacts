@@ -1,0 +1,25 @@
+@keyframes move-out {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes move-in {
+  0% {
+    transform: translate(100%);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+::view-transition-old(root) {
+  animation: 1s ease-out both move-out;
+}
+/**/
+::view-transition-new(root) {
+  animation: 1s ease-in both move-in;
+}

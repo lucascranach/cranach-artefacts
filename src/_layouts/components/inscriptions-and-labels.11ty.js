@@ -10,7 +10,26 @@ const getDataList = (eleventy, data, title) => {
   `;
 };
 
-const getInscriptions = (eleventy, content, langCode) => {
+const buildSection = (eleventy, inscriptionsContent, inscriptionsRaw, labelTranslationKey, langCode, elementId) => {
+  const numberOfWords = 20;
+  const words = inscriptionsRaw.split(/ /);
+  const preview = words.length > numberOfWords ? `${words.slice(0, numberOfWords).join(' ')} …` : inscriptionsRaw;
+  const label = eleventy.translate(labelTranslationKey, langCode);
+  const id = elementId;
+
+  return `
+    <dl id="${id}" class="definition-list is-grid">
+      <dt class="definition-list__term">${label}</dt>
+      <dd class="definition-list__definition">${preview}</dd>
+    </dl>
+    <div id="completeData${id}" class="additional-content js-additional-content" data-is-additional-content-to="${id}">
+      <h2 class="additional-content__title js-collapse-additional-content has-interaction">${label}</h2>
+      ${inscriptionsContent}
+    </div>
+  `;
+};
+
+const getInscriptionsContent = (eleventy, content, langCode) => {
   let inscriptionsRaw = `${content.inscription}`;
   inscriptionsRaw = inscriptionsRaw.replace(/\n *?\n/sg, '\n\n');
   const inscriptionsData = inscriptionsRaw.split(/\n/);
@@ -18,7 +37,7 @@ const getInscriptions = (eleventy, content, langCode) => {
   return inscriptionsRaw ? getDataList(eleventy, inscriptionsData, inscriptionsTitle) : '';
 };
 
-const getLabels = (eleventy, content, langCode) => {
+const getLabelsContent = (eleventy, content, langCode) => {
   let labelsRaw = `${content.markings}`.replace(/:\n/, ': ');
   labelsRaw = labelsRaw.replace(/\n *?\n/sg, '\n\n');
   const labelsData = labelsRaw.split(/\n/);
@@ -26,30 +45,30 @@ const getLabels = (eleventy, content, langCode) => {
   return labelsRaw ? getDataList(eleventy, labelsData, titleTitle) : '';
 };
 
-exports.getInscriptionsAndLabels = (eleventy, { content }, langCode) => {
-  const numberOfWords = 20;
-  const inscriptionsAndLabels = content.inscription || content.markings;
-  let inscriptionsAndLabelsRaw = content.inscription ? `${content.inscription} ${content.markings}` : content.markings;
+exports.getInscriptions = (eleventy, { content }, langCode) => {
+  const inscriptions = content.inscription;
+  let inscriptionsRaw = content.inscription;
 
-  inscriptionsAndLabelsRaw = inscriptionsAndLabelsRaw.replace(/:\n/, ': ');
-  inscriptionsAndLabelsRaw = eleventy.markdownify(inscriptionsAndLabelsRaw);
-  const inscriptions = getInscriptions(eleventy, content, langCode);
-  const labels = getLabels(eleventy, content, langCode);
+  inscriptionsRaw = inscriptionsRaw.replace(/:\n/, ': ');
+  inscriptionsRaw = eleventy.markdownify(inscriptionsRaw);
+  const inscriptionsContent = getInscriptionsContent(eleventy, content, langCode);
 
-  const words = inscriptionsAndLabelsRaw.split(/ /);
-  const preview = words.length > numberOfWords ? `${words.slice(0, numberOfWords).join(' ')} …` : inscriptionsAndLabelsRaw;
-  const label = eleventy.translate('inscriptionsOuterHeadline', langCode);
-  const id = 'InscriptionsAndLabels';
+  if (!inscriptions) {
+    return '';
+  }
+  return buildSection(eleventy, inscriptionsContent, inscriptionsRaw, 'inscriptionsOuterHeadline', langCode, 'inscriptions');
+};
 
-  return !inscriptionsAndLabels ? '' : `
-    <dl id="${id}" class="definition-list is-grid">
-      <dt class="definition-list__term">${label}</dt>
-      <dd class="definition-list__definition">${preview}</dd>
-    </dl>
-    <div id="completeData${id}" class="additional-content js-additional-content" data-is-additional-content-to="${id}">
-      <h2 class="additional-content__title js-collapse-additional-content has-interaction">${label}</h2>
-      ${inscriptions}
-      ${labels}
-    </div>
-  `;
+exports.getLabels = (eleventy, { content }, langCode) => {
+  const labels = content.markings;
+  let labelsRaw = content.markings;
+
+  labelsRaw = labelsRaw.replace(/:\n/, ': ');
+  labelsRaw = eleventy.markdownify(labelsRaw);
+  const labelsContent = getLabelsContent(eleventy, content, langCode);
+
+  if (!labels) {
+    return '';
+  }
+  return buildSection(eleventy, labelsContent, labelsRaw, 'labelsOuterHeadline', langCode, 'labels');
 };
