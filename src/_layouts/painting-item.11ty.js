@@ -37,6 +37,7 @@ const SIMILAR_TO = 'SIMILAR_TO';
 const BELONGS_TO = 'BELONGS_TO';
 const GRAPHIC = 'GRAPHIC';
 const PART_OF_WORK = 'PART_OF_WORK';
+const ON_SAME_SHEET = 'ON_SAME_SHEET';
 
 const getImageStack = ({ content }) => JSON.stringify(content.images);
 const getimageBaseUrl = () => JSON.stringify(config.imageTiles);
@@ -98,8 +99,8 @@ exports.render = function (pageData) {
   const similarTo = referencesSnippet.getReference(this, data, langCode, SIMILAR_TO);
   const belongsTo = referencesSnippet.getReference(this, data, langCode, BELONGS_TO);
   const graphic = referencesSnippet.getReference(this, data, langCode, GRAPHIC);
-
   const partOfWork = referencesSnippet.getReference(this, data, langCode, PART_OF_WORK, true);
+  const onSameSheet = referencesSnippet.getReference(this, data, langCode, ON_SAME_SHEET);
   const imageDescriptionObjectInfo = imageDescriptionSnippet.getImageDescriptionObjectInfo(data);
   const citeCda = citeCdaSnippet.getCiteCDA(this, data, langCode);
   const improveCdaSnippet = improveCda.getImproveCDA(this, data, config, langCode);
@@ -203,6 +204,7 @@ exports.render = function (pageData) {
             ${similarTo}
             ${belongsTo}
             ${graphic}
+            ${onSameSheet}
           </div>
         </section>
         <section class="final-words">
