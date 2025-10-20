@@ -2,7 +2,7 @@ exports.getMediumOfPainting = (eleventy, { content }, langCode) => {
   const { medium } = content;
   const prefix = content.metadata.id;
   const structuredMediumData = eleventy.getStructuredDataFromString(medium);
-  const visibleContent = structuredMediumData[0].text;
+  const visibleContent = structuredMediumData[0].text.split('<br>')[0];
   const hasAdditionalContent = !!(structuredMediumData.length >= 1 && structuredMediumData[0].remark.match(/[a-z]/));
   const label = eleventy.translate('medium', langCode);
   const remarkDataTableData = {
@@ -27,7 +27,7 @@ exports.getMediumOfGraphic = (eleventy, { content }, langCode) => {
   const { medium } = content;
   const prefix = content.metadata.id;
   const structuredMediumData = eleventy.getStructuredDataFromString(medium);
-  const visibleContent = structuredMediumData[0].text;
+  const visibleContent = structuredMediumData[0].text.split('<br>')[0];
   const hasAdditionalContent = !!(structuredMediumData.length >= 1 && structuredMediumData[0].remark.match(/[a-z]/));
   const label = eleventy.translate('medium', langCode);
   const remarkDataTableData = {
