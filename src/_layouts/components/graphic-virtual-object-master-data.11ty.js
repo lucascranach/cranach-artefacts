@@ -7,6 +7,8 @@ const representantImageSnippet = require('./representant-image.11ty');
 const attributionSnippet = require('./attribution.11ty');
 const datingSnippet = require('./dating.11ty');
 const signatureSnippet = require('./signature.11ty');
+const inscriptionsAndLabelsSnippet = require('./inscriptions-and-labels.11ty');
+
 const dimensionsSnippet = require('./dimensions.11ty');
 const descriptionSnippet = require('./description.11ty');
 const exhibitonsSnippet = require('./exhibitons.11ty');
@@ -48,6 +50,9 @@ exports.getMasterData = (eleventy, pageData) => {
   const image = representantImageSnippet.getRepresentant(eleventy, data);
   const dimensions = dimensionsSnippet.getDimensions(eleventy, data, langCode);
   const signature = signatureSnippet.getSignature(eleventy, data, langCode);
+  const inscriptions = inscriptionsAndLabelsSnippet.getInscriptions(eleventy, data, langCode);
+  const labels = inscriptionsAndLabelsSnippet.getLabels(eleventy, data, langCode);
+
   const ids = identificationSnippet.getIds(eleventy, data, langCode);
   const exhibitions = exhibitonsSnippet.getExhibitions(eleventy, data, langCode);
   const additionalTextInformation = additionalTextInformationSnippet.getAdditionalTextInformation(eleventy, data, langCode);
@@ -73,6 +78,8 @@ exports.getMasterData = (eleventy, pageData) => {
               ${dating}
               ${dimensions}
               ${signature}
+              ${inscriptions}
+              ${labels}
             </div>
             <div class="block">
               ${ids}
