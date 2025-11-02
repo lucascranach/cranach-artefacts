@@ -17,7 +17,9 @@ const parseJson = (jsonString) => {
 ============================================================================ */
 
 const setMetadata = async (artefactId, imageId, apiEndpoint, apiKey) => {
-  document.querySelector('iframe').setAttribute(
+  const metaDataIframe = document.querySelector('iframe');
+  if(!metaDataIframe) return;
+  metaDataIframe.setAttribute(
     'src',
     `${apiEndpoint}?artefact=${artefactId}&image=${imageId}&apiKey=${apiKey}`,
   );

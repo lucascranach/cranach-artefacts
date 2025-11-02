@@ -348,7 +348,7 @@ const getArchivalsCollection = (lang) => {
 
   const archivals = config.onlyDevObjects === true
     ? archivalsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
-    : archivalsForLang.items.filter(item => item.metadata.isPublished === true);
+    : archivalsForLang.items;
   
   let sortedArchivals = archivals.sort((a, b) => {
     if (a.period < b.period) return -1;
