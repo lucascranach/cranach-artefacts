@@ -674,6 +674,60 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
   }
 
+  /* Overlay
+  --------------------------------------------------------------------------  */
+  const triggerOverlayOpen = document.querySelectorAll('[data-js-overlay-open]');
+  triggerOverlayOpen.forEach((trigger) => {
+    const triggerConfig = trigger.dataset.jsOverlayOpen;
+    if (!triggerConfig) return;
+    const { target } = parseJson(triggerConfig);
+    if (!target) return;
+    const overlay = document.querySelector(`[data-js-overlay-target="${target}"]`);
+    if (overlay) {
+      trigger.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        overlay.showModal();
+      });
+
+      const closeOverlay = () => {
+        overlay.classList.add('overlay--closing');
+
+        // Event listener for the end of the CSS transition
+        const handleTransitionEnd = (transitionEvent) => {
+          // Only respond to opacity transitions to ignore other transitions
+          if (transitionEvent.propertyName === 'opacity' && transitionEvent.target === overlay) {
+            overlay.removeEventListener('transitionend', handleTransitionEnd);
+            overlay.close();
+            overlay.classList.remove('overlay--closing');
+          }
+        };
+        overlay.addEventListener('transitionend', handleTransitionEnd);
+      };
+
+      // Close with close button
+      const closeButton = overlay.querySelector('[data-js-overlay-close]');
+      if (closeButton) {
+        closeButton.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          closeOverlay();
+        });
+      }
+
+      // Close when clicking on Backdrop
+      overlay.addEventListener('click', (ev) => {
+        if (ev.target === overlay) {
+          closeOverlay();
+        }
+      });
+
+      // Close with Escape key
+      overlay.addEventListener('cancel', (ev) => {
+        ev.preventDefault();
+        closeOverlay();
+      });
+    }
+  });
+
   /* Go to Search Button
   --------------------------------------------------------------------------  */
   /*

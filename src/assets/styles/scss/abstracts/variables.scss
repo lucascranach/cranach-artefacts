@@ -12,6 +12,7 @@ $lighten: rgba(255, 255, 255, 0.06);
 $lighten-strong: rgba(255, 255, 255, 0.2);
 $accent: #fc0;
 $accent-dark: #e8a60c;
+$accent-secondary: #cc5800;
 $error: #c00;
 $darken: rgba(0, 0, 0, 0.06);
 $darken-medium: rgba(0, 0, 0, 0.3);
@@ -153,6 +154,11 @@ $radius-m: 5px;
   --responsive-padding-bottom: #{$l};
   --responsive-padding-bottom-inner: #{$m};
   --responsive-gap: #{$m};
+  
+  /* Overlay Dimensions */
+  --overlay-width: 90vw;
+  --overlay-height: auto;
+  --overlay-max-height: 80vh;
 
   @media only screen and (min-width: $vp-xlarge) {
     --responsive-padding-top: #{$xxl};
@@ -161,6 +167,10 @@ $radius-m: 5px;
     --responsive-padding-bottom: #{$xxxl};
     --responsive-padding-bottom-inner: #{$xl};
     --responsive-gap: #{$xl};
+    
+    /* Overlay Dimensions - Large Screens */
+    --overlay-width: 80vw;
+    --overlay-max-height: 85vh;
   }
 
   @media only screen and (min-width: $vp-xxlarge) {
@@ -170,5 +180,11 @@ $radius-m: 5px;
     --responsive-padding-bottom: #{$xxxl};
     --responsive-padding-bottom-inner: #{$xxl};
     --responsive-gap: #{$xxl};
+    
+    /* Overlay Dimensions - Extra Large Screens */
+    --overlay-width: 70vw;
+    --overlay-max-height: 90vh;
   }
+
+  
 }

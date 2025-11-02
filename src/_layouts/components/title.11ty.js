@@ -4,6 +4,7 @@ exports.getTitle = (eleventy, { content }, langCode) => {
     ? content.titles.map((item) => ({ text: item.title, remark: item.remarks }))
     : [];
   const label = titleList.length > 1 ? eleventy.translate('titles', langCode) : eleventy.translate('title', langCode);
+
   const remarkDataTableData = {
     id: 'Titles',
     content: titleList,
@@ -18,6 +19,3 @@ exports.getTitle = (eleventy, { content }, langCode) => {
     ${allTitles}
   `;
 };
-
-
-
