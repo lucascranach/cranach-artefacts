@@ -11,6 +11,10 @@ if (fs.existsSync(logMissedLinks)) {
   fs.unlinkSync(logMissedLinks);
 }
 
+const blacklist = [
+  'FR_MR_795-1-268',
+];
+
 const config = {
   "dist": "./docs",
   "compiledContent": "./compiled-content",
@@ -228,6 +232,8 @@ const getPaintingsCollection = (lang) => {
     return 0;
   });
 
+  sortedPaintings = sortedPaintings.filter(item => !blacklist.includes(item.inventoryNumber));
+
   if (process.env.ELEVENTY_ENV === 'internal'
     || process.env.ELEVENTY_ENV === 'development') return sortedPaintings;
 
@@ -328,7 +334,7 @@ const getGraphicsRealObjectsCollection = (lang) => {
     return 0;
   });
 
-  return sortedGraphicsRealObjects;
+  return sortedGraphicsRealObjects.filter(item => !blacklist.includes(item.inventoryNumber));
 }
 
 const getGraphicsVirtualObjectsCollection = (lang) => {
@@ -338,11 +344,13 @@ const getGraphicsVirtualObjectsCollection = (lang) => {
   const graphicsVirtualObjects = config.onlyDevObjects === true
     ? graphicsVirtualObjectsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
     : graphicsVirtualObjectsForLang.items;
-  const sortedGraphicsVirtualObjects = graphicsVirtualObjects.sort((a, b)=>{
+  let sortedGraphicsVirtualObjects = graphicsVirtualObjects.sort((a, b)=>{
     if (a.sortingNumber < b.sortingNumber) return -1;
     if (a.sortingNumber > b.sortingNumber) return 1;
     return 0;
   });
+
+  sortedGraphicsVirtualObjects = sortedGraphicsVirtualObjects.filter(item => !blacklist.includes(item.inventoryNumber));
 
   if (process.env.ELEVENTY_ENV === 'internal'
     || process.env.ELEVENTY_ENV === 'development') return sortedGraphicsVirtualObjects;
