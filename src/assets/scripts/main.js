@@ -592,6 +592,83 @@ const reduceNavigation = () => {
   // observer.observe(leporello);
 };
 
+/* Dialog/Overlay Utility Functions
+============================================================================ */
+
+/**
+ * Creates a dialog manager with common functionality for opening/closing dialogs
+ * @param {HTMLElement} dialog - The dialog element
+ * @param {Object} options - Configuration options
+ * @returns {Object} - Dialog manager object with show/hide methods
+ */
+const createDialogManager = (dialog, options = {}) => {
+  if (!dialog) return null;
+
+  const {
+    onBeforeShow = null,
+    onAfterShow = null,
+    onBeforeClose = null,
+    onAfterClose = null,
+  } = options;
+
+  const show = (data = null) => {
+    if (onBeforeShow && typeof onBeforeShow === 'function') {
+      onBeforeShow(data);
+    }
+
+    dialog.showModal();
+
+    if (onAfterShow && typeof onAfterShow === 'function') {
+      onAfterShow(data);
+    }
+  };
+
+  const hide = () => {
+    if (onBeforeClose && typeof onBeforeClose === 'function') {
+      onBeforeClose();
+    }
+
+    dialog.classList.add('overlay--closing');
+
+    const handleTransitionEnd = (transitionEvent) => {
+      if (transitionEvent.propertyName === 'opacity' && transitionEvent.target === dialog) {
+        dialog.removeEventListener('transitionend', handleTransitionEnd);
+        dialog.close();
+        dialog.classList.remove('overlay--closing');
+
+        if (onAfterClose && typeof onAfterClose === 'function') {
+          onAfterClose();
+        }
+      }
+    };
+    dialog.addEventListener('transitionend', handleTransitionEnd);
+  };
+
+  // Set up close button listener
+  const closeButton = dialog.querySelector('[data-js-overlay-close]');
+  if (closeButton) {
+    closeButton.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      hide();
+    });
+  }
+
+  // Set up backdrop click listener
+  dialog.addEventListener('click', (ev) => {
+    if (ev.target === dialog) {
+      hide();
+    }
+  });
+
+  // Set up escape key listener
+  dialog.addEventListener('cancel', (ev) => {
+    ev.preventDefault();
+    hide();
+  });
+
+  return { show, hide, dialog };
+};
+
 /* Main
 ============================================================================ */
 
@@ -683,47 +760,30 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const { target } = parseJson(triggerConfig);
     if (!target) return;
     const overlay = document.querySelector(`[data-js-overlay-target="${target}"]`);
+    
     if (overlay) {
       trigger.addEventListener('click', (ev) => {
         ev.preventDefault();
-        overlay.showModal();
-      });
-
-      const closeOverlay = () => {
-        overlay.classList.add('overlay--closing');
-
-        // Event listener for the end of the CSS transition
-        const handleTransitionEnd = (transitionEvent) => {
-          // Only respond to opacity transitions to ignore other transitions
-          if (transitionEvent.propertyName === 'opacity' && transitionEvent.target === overlay) {
-            overlay.removeEventListener('transitionend', handleTransitionEnd);
-            overlay.close();
-            overlay.classList.remove('overlay--closing');
+        
+        // Special handling for download overlay
+        if (target === 'download' && trigger.dataset.jsImageDownload) {
+          const downloadData = JSON.parse(trigger.dataset.jsImageDownload);
+          if (downloadData && downloadData.length > 0 && window.downloadDialogManager) {
+            // Get preview image from the trigger's parent image element
+            const imageElement = trigger.closest('.image-stripe-list__item');
+            const previewImg = imageElement ? imageElement.querySelector('img') : null;
+            const imageData = {
+              downloadSizes: downloadData,
+              previewSrc: previewImg ? previewImg.src : null,
+              previewAlt: previewImg ? previewImg.alt : '',
+            };
+            window.downloadDialogManager.show(imageData);
           }
-        };
-        overlay.addEventListener('transitionend', handleTransitionEnd);
-      };
-
-      // Close with close button
-      const closeButton = overlay.querySelector('[data-js-overlay-close]');
-      if (closeButton) {
-        closeButton.addEventListener('click', (ev) => {
-          ev.preventDefault();
-          closeOverlay();
-        });
-      }
-
-      // Close when clicking on Backdrop
-      overlay.addEventListener('click', (ev) => {
-        if (ev.target === overlay) {
-          closeOverlay();
+        } else {
+          // Generic overlay handling
+          const dialogManager = createDialogManager(overlay);
+          dialogManager.show();
         }
-      });
-
-      // Close with Escape key
-      overlay.addEventListener('cancel', (ev) => {
-        ev.preventDefault();
-        closeOverlay();
       });
     }
   });
@@ -781,7 +841,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     if (target.closest('.js-edit-metadata')) {
       const element = target.closest('.js-edit-metadata');
       const { id } = element;
-      console.log('Clicked to edit metadata', element, id);
     }
 
     if (target.closest('.js-expand-additional-content')) {
@@ -823,4 +882,58 @@ document.addEventListener('DOMContentLoaded', (event) => {
       imageViewer.filterImageStripe(target);
     }
   }, false);
+
+  /* Download Overlay Functionality
+  ============================================================================ */
+  function initDownloadOverlay() {
+    const { translations } = globalData;
+    const { langCode } = globalData;
+    const overlay = document.querySelector('[data-js-overlay-target="download"]');
+    const downloadSizesList = document.querySelector('[data-js-download-sizes-list]');
+    const downloadPreview = document.querySelector('[data-js-download-preview]');
+
+    if (!overlay || !downloadSizesList || !downloadPreview) return;
+
+    // Create dialog manager with custom callbacks
+    const dialogManager = createDialogManager(overlay, {
+      onBeforeShow: (imageData) => {
+        // Handle both old and new data structures
+        const downloadData = imageData.downloadSizes || imageData;
+        // Generate download links
+        const downloadLinks = downloadData.map((sizeData) => {          
+          const sizeLabel = translations[`size-${sizeData.size}`][langCode] || sizeData.size;
+          const dimensions = ` (${sizeData.dimensions.width}×${sizeData.dimensions.height}px)`;
+          return `<li class="download-overlay__list-item"><a href="${sizeData.src}" target="_blank" rel="noopener noreferrer" `
+                 + `data-size="${sizeData.size}">${sizeLabel}${dimensions}</a></li>`;
+        }).join('');
+
+        downloadSizesList.innerHTML = downloadLinks;
+
+        // Update preview image if available
+        if (imageData.previewSrc && downloadPreview) {
+          const imgHTML = `<img src="${imageData.previewSrc}" alt="${imageData.previewAlt || ''}" />`;
+          downloadPreview.innerHTML = imgHTML;
+        }
+      },
+      onAfterClose: () => {
+        // Clear download links and preview when overlay is closed
+        downloadSizesList.innerHTML = '';
+        downloadPreview.innerHTML = '';
+      },
+    });
+
+    // Store the dialog manager globally so the overlay trigger can access it
+    window.downloadDialogManager = dialogManager;
+
+    // Handle download link clicks
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('.download-link')) {
+        // Close overlay after download starts
+        setTimeout(() => dialogManager.hide(), 500);
+      }
+    });
+  }
+
+  // Initialize download overlay
+  initDownloadOverlay();
 });
