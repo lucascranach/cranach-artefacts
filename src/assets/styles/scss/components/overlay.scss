@@ -1,14 +1,17 @@
 .overlay {
   display: flex;
-  width: var(--overlay-width);
-  height: var(--overlay-height);
-  max-height: var(--overlay-max-height);  
   flex-direction: column;
   padding: var(--responsive-padding-top-inner) var(--responsive-padding-right-left) var(--responsive-padding-bottom-inner);
   border: none;
   box-shadow: 0 0 0 100vw rgba(0, 0, 0, 0);
   opacity: 0;
   transition: opacity $tr-fast, box-shadow $tr-fast;
+
+  &--maximized {
+    width: var(--overlay-width);
+    height: var(--overlay-height);
+    max-height: var(--overlay-max-height);  
+  }
 
   &[open] {
     box-shadow: 0 0 0 100vw  $darken-strongest;
