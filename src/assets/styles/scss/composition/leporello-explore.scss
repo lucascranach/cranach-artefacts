@@ -142,20 +142,20 @@
       }
 
       &[data-collected=false] .collect-interaction{
-        position: relative;
-        display: block;
+        @include interaction-button-base;
 
         &::after{
-          @include compare-collection;
-          background-color: $accent;
-          color: $darkest;
           content: "playlist_add";
         }
       }
 
       &[data-collected=true] .collect-interaction{
+        @include interaction-button-base;
+        background-color: $darkest;
+        color: $accent;
+
+
         &::after{
-          @include compare-collection;
           content: "playlist_remove";
         }
       }
@@ -163,11 +163,12 @@
       .download-interaction{
         position: relative;
         display: block;
+        padding: none;
+        background:none;
+        @include interaction-button-base;
+        
 
         &::after{
-          @include download-interaction;
-          background-color: $accent;
-          color: $darkest;
           content: "download";
         }
       }
@@ -256,114 +257,49 @@ a.cranach-compare-launcher{
 // --------------------------------------------------------------------------
 
 .download-overlay {
-  position: fixed;
-  z-index: 9999;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-
-  &__backdrop {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba($darkest, 0.8);
-  }
-
-  &__content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    overflow: hidden;
-    min-width: 400px;
-    max-width: 90vw;
-    max-height: 90vh;
-    border: solid $border-stroke-weight-s $darken-medium;
-    background-color: $lightest;
-    border-radius: $radius-s;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    transform: translate(-50%, -50%);
-
-    @media only screen and (max-width: 768px) {
-      min-width: 300px;
-    }
-  }
-
-  &__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: $s $m;
-    border-bottom: solid $border-stroke-weight-s #e0e0e0;
-    background-color: $lighter;
-  }
-
-  &__title {
-    margin: 0;
-    color: $darkest;
-    font-size: $l;
-    font-weight: $fw-regular;
-  }
-
-  &__close {
-    padding: $quad;
-    border: none;
-    background: none;
-    color: $dark;
-    cursor: pointer;
-    font-size: $xl;
-    font-weight: $fw-bold;
-    transition: color $tr-fast;
-
-    &:hover {
-      color: $darkest;
-    }
-  }
-
-  .download-sizes-list {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-
-    li {
-      margin-bottom: $s;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-    }
-  }
 
   &__license {
     padding-top: $m;
     border-top: 1px solid $light;
     margin-top: $m;
+  }
 
-    .license-info {
-      margin: 0;
-      font-size: $s;
+  &__license-info {
+    margin: 0;
+    font-size: $s;
+  }
 
+  &__main {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: $m;
+    gap: $s;
+
+    @media only screen and (min-width: 768px) {
+      flex-direction: row;
+      gap: $xxl;
     }
   }
-}
 
-.download-link {
-  margin-top: $xs;
-  // display: block;
-  // padding: $s;
-  // border: none;
-  // background-color: $darken;
-  // border-radius: 0;
-  // color: $darken-strong;
-  // font-size: $m;
-  // font-weight: $fw-regular;
-  // text-decoration: none;
-  // transition: all $tr-fast;
+  &__preview {
 
-  // &:hover {
-  //   background-color: $darken-medium;
-  //   color: $darken-strong;
-  // }
+    img {
+      width: auto;
+      max-width: 200px;
+      max-height: 400px;
+    }
+  }
+
+  &__list {
+    padding: 0;
+    margin: 0 $xl 0 0;
+    list-style: none;
+  }
+
+  &__list-item {
+    margin-bottom: $m;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
