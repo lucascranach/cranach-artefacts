@@ -900,8 +900,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
         // Handle both old and new data structures
         const downloadData = imageData.downloadSizes || imageData;
         // Generate download links
-        const downloadLinks = downloadData.map((sizeData) => {          
-          const sizeLabel = translations[`size-${sizeData.size}`][langCode] || sizeData.size;
+        const downloadLinks = downloadData.map((sizeData) => {
+          if (!translations[`size-${sizeData.size}`]) return '';
+          const sizeLabel = translations[`size-${sizeData.size}`][langCode];
           const dimensions = ` (${sizeData.dimensions.width}×${sizeData.dimensions.height}px)`;
           return `<li class="download-overlay__list-item"><a href="${sizeData.src}" target="_blank" rel="noopener noreferrer" `
                  + `data-size="${sizeData.size}">${sizeLabel}${dimensions}</a></li>`;
