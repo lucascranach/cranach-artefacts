@@ -20,7 +20,6 @@ exports.getImageStripe = (eleventy, { content }, langCode, config, hasSeperator 
 
       // Prepare download sizes data for tooltip
       const downloadSizes = image.sizes ? Object.keys(image.sizes)
-        .filter((size) => size !== 'tiles' && image.sizes[size].src) // Exclude tiles and empty sources
         .map((size) => ({
           size,
           src: image.sizes[size].src,
