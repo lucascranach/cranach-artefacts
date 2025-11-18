@@ -127,30 +127,53 @@
         display: none;
       }
 
-      &[data-collected=false] .collect-interaction{
+      .image-buttons-container {
         position: absolute;
         top: -50px;
-        display: block;
+        left: 0;
+        display: flex;
+        flex-direction: row;
+        gap: $xs;
         transition: top $tr-fast;
+      }
+
+      &:hover .image-buttons-container {
+        top: 0;
+      }
+
+      &[data-collected=false] .collect-interaction{
+        @include interaction-button-base;
 
         &::after{
-          @include compare-collection;
-          background-color: $accent;
-          color: $darkest;
           content: "playlist_add";
         }
       }
 
-      &[data-collected=false]:hover .collect-interaction{
-        top: 0;
-      }
-
       &[data-collected=true] .collect-interaction{
+        @include interaction-button-base;
+        background-color: $darkest;
+        color: $accent;
+
+
         &::after{
-          @include compare-collection;
           content: "playlist_remove";
         }
       }
+
+      .download-interaction{
+        position: relative;
+        display: block;
+        padding: none;
+        background:none;
+        @include interaction-button-base;
+        
+
+        &::after{
+          content: "download";
+        }
+      }
+
+
     }
   }
 }
@@ -227,5 +250,56 @@ a.cranach-compare-launcher{
     content: "expand_more";
     font-family: $font-icons;
     font-size: $m;
+  }
+}
+
+// Download Overlay
+// --------------------------------------------------------------------------
+
+.download-overlay {
+
+  &__license {
+    padding-top: $m;
+    border-top: 1px solid $light;
+    margin-top: $m;
+  }
+
+  &__license-info {
+    margin: 0;
+    font-size: $s;
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: $m;
+    gap: $s;
+
+    @media only screen and (min-width: 768px) {
+      flex-direction: row;
+      gap: $xxl;
+    }
+  }
+
+  &__preview {
+
+    img {
+      width: auto;
+      max-width: 200px;
+      max-height: 400px;
+    }
+  }
+
+  &__list {
+    padding: 0;
+    margin: 0 $xl 0 0;
+    list-style: none;
+  }
+
+  &__list-item {
+    margin-bottom: $m;
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }

@@ -24,7 +24,7 @@ exports.getReference = (eleventy, data, langCode, type, isOpen = false) => {
   const { content } = data;
   const references = getReferences(eleventy, content, type);
   const overallOverview = type === 'PART_OF_WORK' ? overallOverviewSnippet.getOverallOverview(eleventy, data, langCode) : '';
-  
+
   const getTypeContent = (refType) => {
     const maxContentItems = 4;
     const baseUrl = eleventy.getBaseUrl();
@@ -71,7 +71,7 @@ exports.getReference = (eleventy, data, langCode, type, isOpen = false) => {
         ${typeContentItemsOverlay ? `
           <button class="button" data-js-overlay-open='{"target":"${eleventy.slugify(type)}"}'> ${eleventy.translate('SHOW_ALL', langCode)}</button>
 
-          <dialog class="overlay" data-js-overlay-target="${eleventy.slugify(type)}">
+          <dialog class="overlay overlay--maximized" data-js-overlay-target="${eleventy.slugify(type)}">
           <div class="overlay__header">
             <h2>${eleventy.translate(type, langCode)}<h2>
               <button class="button button--is-transparent button__icon--is-large

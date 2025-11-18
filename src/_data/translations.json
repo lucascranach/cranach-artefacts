@@ -643,6 +643,19 @@
   "PART_OF_SERIES":{
     "de": "Teil einer Serie",
     "en": "Part of series"
+  },
+  "downloadIllustration": {
+    "de": "Abbildung herunterladen",
+    "en": "Download illustration"
+  },
+  "license": {
+    "de": "Lizenz:",
+    "en": "License:"
+  },
+
+  "licenseText": {
+    "de": "Creative Commons Namensnennung 4.0 International",
+    "en": "Creative Commons Attribution 4.0 International"
   }
   ,
   "SHOW_ALL":{ 

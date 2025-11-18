@@ -1,14 +1,22 @@
 .overlay {
   display: flex;
   width: var(--overlay-width);
-  height: var(--overlay-height);
-  max-height: var(--overlay-max-height);  
   flex-direction: column;
   padding: var(--responsive-padding-top-inner) var(--responsive-padding-right-left) var(--responsive-padding-bottom-inner);
   border: none;
   box-shadow: 0 0 0 100vw rgba(0, 0, 0, 0);
   opacity: 0;
   transition: opacity $tr-fast, box-shadow $tr-fast;
+
+  @media only screen and (min-width: $vp-medium) {
+    width: fit-content;
+  }
+
+  &--maximized {
+    width: var(--overlay-width);
+    height: var(--overlay-height);
+    max-height: var(--overlay-max-height);  
+  }
 
   &[open] {
     box-shadow: 0 0 0 100vw  $darken-strongest;
@@ -88,16 +96,16 @@
         font-size: $m;
       }
 
-      p:last-child {
-        margin-bottom: 0;
-      }
-
       h3 {
         font-weight: $fw-semibold;
       }
 
       h4, p {
         font-weight: $fw-light;
+      }
+
+      p:last-child {
+        margin-bottom: 0;
       }
     }
 
