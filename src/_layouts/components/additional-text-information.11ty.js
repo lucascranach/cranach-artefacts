@@ -16,16 +16,22 @@ exports.getAdditionalTextInformation = (eleventy, { content }, langCode) => {
       `;
     });
   };
+  // Generate unique ID to avoid conflicts when multiple instances exist on the same page
+  const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  
   return uniqueAdditionalInfoTypes.length === 0 ? '' : uniqueAdditionalInfoTypes.map((type) => {
     const sluggedType = getSluggedType(type);
     const typeHeadline = getHeadline(sluggedType);
+    const elementId = `${sluggedType}-${uniqueId}`;
     return `
       <div class="foldable-block has-strong-separator">
-        <h2 class="foldable-block__headline is-expand-trigger js-expand-trigger" data-js-expanded="false" data-js-expandable="${sluggedType}">${typeHeadline}</h2>
-        <div class="expandable-content" id="${sluggedType}">
+        <h2 class="foldable-block__headline is-expand-trigger js-expand-trigger" 
+            data-js-expanded="false" 
+            data-js-expandable="${elementId}">${typeHeadline}</h2>
+        <div class="expandable-content" id="${elementId}">
           ${getTypeContent(type).join('')}
         </div>
       </div>
-    `
-  });
+    `;
+  }).join('');
 };
