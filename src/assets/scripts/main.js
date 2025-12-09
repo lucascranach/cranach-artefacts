@@ -18,11 +18,64 @@ const parseJson = (jsonString) => {
 
 const setMetadata = async (artefactId, imageId, apiEndpoint, apiKey) => {
   const metaDataIframe = document.querySelector('iframe');
-  if(!metaDataIframe) return;
+  if (!metaDataIframe) return;
   metaDataIframe.setAttribute(
     'src',
     `${apiEndpoint}?artefact=${artefactId}&image=${imageId}&apiKey=${apiKey}`,
   );
+};
+
+/* Fetch EXIF metadata from API
+============================================================================ */
+const fetchMetaExifData = async (params) => {
+  const baseUrl = objectData.metadataExifApiEndpoint;
+
+  // Validierung der erforderlichen Parameter
+  const requiredParams = ['type', 'artefactId', 'imageType', 'resourceId', 'lang'];
+  const missingParam = requiredParams.find((param) => !params[param]);
+  if (missingParam) {
+    return null;
+  }
+
+  const {
+    type,
+    artefactId,
+    imageType,
+    resourceId,
+    lang,
+    subImageType,
+  } = params;
+
+  // URL mit Query-Parametern aufbauen
+  const typeParam = `type=${encodeURIComponent(type)}`;
+  const artefactParam = `artefactId=${encodeURIComponent(artefactId)}`;
+  const imageTypeParam = `imageType=${encodeURIComponent(imageType)}`;
+  const resourceParam = `resourceId=${encodeURIComponent(resourceId)}`;
+  const langParam = `lang=${encodeURIComponent(lang)}`;
+
+  let url = `${baseUrl}?${typeParam}&${artefactParam}&${imageTypeParam}&${resourceParam}&${langParam}`;
+
+  // Optional: subImageType hinzufügen, falls vorhanden
+  if (subImageType) {
+    url += `&subImageType=${encodeURIComponent(subImageType)}`;
+  }
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    return null;
+  }
 };
 
 /* Global Notification
@@ -351,11 +404,33 @@ class ImageViewer {
     globalData.clipableElements[id] = new ClipableElement(element);
   }
 
-  setCaption(img) {
+  async setCaption(img, trigger) {
     const artefactIdentifier = `${globalData.inventoryNumber}_${globalData.idExtension}`;
     const imageIdentifier = img.id.replace(`${artefactIdentifier}_`, '');
     setMetadata(artefactIdentifier, imageIdentifier, globalData.metadataApiEndpoint, globalData.metadataApiKey);
-    const { metadata } = img;
+
+    // Fetch metadata from API using data attributes from trigger element
+    let metadata = null;
+    if (trigger) {
+      const imageCategory = trigger.dataset.imageCategory || '';
+      const imageSubcategory = trigger.dataset.imageSubcategory || '';
+      const artefactId = trigger.dataset.artefactId || '';
+
+      const apiParams = {
+        type: globalData.kind || 'paintings',
+        artefactId,
+        imageType: imageCategory,
+        resourceId: `${img.id}.tif`,
+        lang: globalData.langCode,
+      };
+
+      if (imageSubcategory) {
+        apiParams.subImageType = imageSubcategory;
+      }
+
+      metadata = await fetchMetaExifData(apiParams);
+    }
+
     const { translations } = globalData;
     const { langCode } = globalData;
     const captionId = 'ImageDescTitle';
@@ -426,7 +501,7 @@ class ImageViewer {
     const url = env.match(/development/) ? this.adaptUrl(initialUrl) : initialUrl;
 
     if (trigger) this.handleTrigger(trigger);
-    this.setCaption({ ...img, url });
+    this.setCaption({ ...img, url }, trigger);
     this.viewer.open(url);
   }
 

@@ -124,6 +124,7 @@ exports.render = function (pageData) {
       <link href="${this.url('/assets/images/favicon.svg')}" rel="icon" type="image/svg">
       <script>
         const objectData = {};
+        objectData.metadataExifApiEndpoint = "${process.env.API_METADATA_EXIF_ENDPOINT}";
         objectData.metadataApiEndpoint = "${shouldIncludeMetadataEditor ? process.env.METADATA_API_ENDPOINT : ''}";
         objectData.metadataApiKey = "${shouldIncludeMetadataEditor ? process.env.METADATA_API_KEY : ''}";
         objectData.langCode = "${langCode}";
