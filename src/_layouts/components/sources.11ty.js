@@ -7,6 +7,7 @@ const getSources = (params) => {
   const { type } = params;
   const { publicationListData } = params;
   const { tableStructure } = params;
+  const { order } = params;
   const config = eleventy.getConfig();
 
   const prefix = content.metadata.id;
@@ -90,7 +91,11 @@ const getSources = (params) => {
     return dateB - dateA;
   });
 
-  const publicationList = publicationListDataByDate.map(
+  const sortedPublicationListData = order === 'old-to-new'
+    ? publicationListDataByDate.reverse()
+    : publicationListDataByDate;
+
+  const publicationList = sortedPublicationListData.map(
     (item, index) => {
       const litRef = eleventy.getLitRef(item.referenceId, langCode);
       const litRefTableData = eleventy.getLitRefTableData(item.referenceData, content.metadata.id);
@@ -203,8 +208,9 @@ exports.getPrimarySources = (eleventy, { content }, langCode, hasGrayBackground 
   ];
   const allPublications = getPublicationListData(eleventy, content.publications, langCode);
   const publicationListData = allPublications.filter((item) => item.referenceData && item.referenceData.isPrimarySource === true);
+  const order = 'old-to-new';
   const params = {
-    eleventy, content, langCode, hasGrayBackground, title, type, publicationListData, tableStructure,
+    eleventy, content, langCode, hasGrayBackground, title, type, publicationListData, tableStructure, order,
   };
   return getSources(params);
 };
