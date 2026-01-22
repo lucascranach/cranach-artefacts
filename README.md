@@ -8,9 +8,8 @@ Bislang ist nur ein [automatisches Deployment für den internen Bereich](https:/
 ```env
 CACHE_FOLDER=.cache
 API_ENDPOINT=https://lucascranach.org/data-proxy/json-data.php
-API_KEY=****************
-METADATA_API_ENDPOINT=https://lucascranach.org/metadata/metadataForm.html
 METADATA_API_KEY=****************
+API_METADATA_EXIF_ENDPOINT=https://lucascranach.org/data-proxy/metadata-exif.php
 ```
 
 ## Lokale Entwicklungsumgebung starten

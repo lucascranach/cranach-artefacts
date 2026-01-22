@@ -28,6 +28,7 @@ const additionalTextInformationSnippet = require('./components/additional-text-i
 const referencesSnippet = require('./components/references.11ty');
 const navigationSnippet = require('./components/navigation.11ty');
 const metadataDrawerSnippet = require('./components/metadata-drawer.11ty');
+const metadataMappings = require('../_data/metadata-mappings.json');
 
 const ART_TECH_EXAMINATION = 'ArtTechExamination';
 const CONDITION_REPORT = 'ConditionReport';
@@ -125,7 +126,6 @@ exports.render = function (pageData) {
       <script>
         const objectData = {};
         objectData.metadataExifApiEndpoint = "${process.env.API_METADATA_EXIF_ENDPOINT}";
-        objectData.metadataApiEndpoint = "${shouldIncludeMetadataEditor ? process.env.METADATA_API_ENDPOINT : ''}";
         objectData.metadataApiKey = "${shouldIncludeMetadataEditor ? process.env.METADATA_API_KEY : ''}";
         objectData.langCode = "${langCode}";
         objectData.imageStack = ${imageStack};
@@ -137,6 +137,7 @@ exports.render = function (pageData) {
         objectData.inventoryNumber = "${id}";
         objectData.idExtension = "${data.content.objectName}";
         objectData.navigationObjects = '${navigationObjects}';
+        window.metadataFieldMappings = ${JSON.stringify(metadataMappings.fields)};
       </script>
     </head>
     <body>
