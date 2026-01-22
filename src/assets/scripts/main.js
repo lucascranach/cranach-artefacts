@@ -526,6 +526,9 @@ class ImageViewer {
       // Populate metadata form with fetched data
       populateMetadataForm(metadata);
     }
+    
+    // Store current image info for later caption updates
+    globalData.currentImage = { ...img, url };
 
     this.setCaption({ ...img, url }, metadata);
     this.viewer.open(url);
@@ -1179,6 +1182,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
         
         showMessage('Metadaten erfolgreich gespeichert', 'success');
+        
+        // Update caption display with new metadata
+        if (imageViewer && globalData.currentImage) {
+          imageViewer.setCaption(globalData.currentImage, metadataObject);
+        }
       } catch (err) {
         console.error('Error saving metadata:', err);
         showMessage('Fehler beim Speichern der Metadaten', 'error');
