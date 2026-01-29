@@ -3,6 +3,9 @@
 
 const globalData = objectData;
 
+// Cache for metadata to avoid redundant API calls
+globalData.metadataCache = {};
+
 /* Parse JSON
 ============================================================================ */
 const parseJson = (jsonString) => {
@@ -44,6 +47,20 @@ const populateMetadataForm = (metadata) => {
       inputField.value = value || '';
     }
   });
+};
+
+/* Update Download Button Visibility
+============================================================================ */
+const updateDownloadButtonVisibility = (triggerElement, isDownloadable) => {
+  // Find the download button in the same image item
+  const imageItem = triggerElement.closest('.image-stripe-list__item');
+  if (!imageItem) return;
+
+  const downloadButton = imageItem.querySelector('.download-interaction');
+  if (!downloadButton) return;
+
+  // Update the data attribute and visibility
+  downloadButton.setAttribute('data-is-downloadable', isDownloadable ? 'true' : 'false');
 };
 
 /* Fetch EXIF metadata from API
@@ -490,6 +507,61 @@ class ImageViewer {
     this.activeTrigger = trigger;
   }
 
+  getCacheKeyAndParams(trigger, img) {
+    const imageCategory = trigger.dataset.imageCategory || '';
+    const imageSubcategory = trigger.dataset.imageSubcategory || '';
+    const artefactId = trigger.dataset.artefactId || '';
+    
+    const cacheKey = `${artefactId}_${imageCategory}_${imageSubcategory}_${img.id}`;
+    
+    const apiParams = {
+      type: globalData.kind || 'paintings',
+      artefactId,
+      imageType: imageCategory,
+      resourceId: `${img.id}.tif`,
+      lang: globalData.langCode,
+    };
+
+    if (imageSubcategory) {
+      apiParams.subImageType = imageSubcategory;
+    }
+
+    return { cacheKey, apiParams };
+  }
+
+  async getMetadata(trigger, img) {
+    const { cacheKey, apiParams } = this.getCacheKeyAndParams(trigger, img);
+    
+    // Check cache first
+    if (globalData.metadataCache[cacheKey]) {
+      return globalData.metadataCache[cacheKey];
+    }
+    
+    // Fetch and cache if not available
+    const metadata = await fetchMetaExifData(apiParams);
+    const cachedData = {
+      metadata,
+      apiParams,
+    };
+    
+    globalData.metadataCache[cacheKey] = cachedData;
+
+    return cachedData;
+  }
+
+  async prefetchMetadata(trigger) {
+    if (!trigger) return;
+
+    const data = parseJson(trigger.dataset.jsChangeImage);
+    if (!data) return;
+
+    const { imageStack } = globalData;
+    const img = imageStack[data.key].images.filter((image) => image.id === data.id).shift();
+    if (!img) return;
+
+    return await this.getMetadata(trigger, img);
+  }
+
   async showImage(type, id, trigger) {
     const { imageStack } = globalData;
     const { env } = globalData;
@@ -499,26 +571,19 @@ class ImageViewer {
 
     if (trigger) this.handleTrigger(trigger);
 
-    // Fetch and populate metadata from EXIF API
+    // Get metadata from cache or fetch if not available
     let metadata = null;
+    let apiParams = null;
+
     if (trigger) {
-      const imageCategory = trigger.dataset.imageCategory || '';
-      const imageSubcategory = trigger.dataset.imageSubcategory || '';
-      const artefactId = trigger.dataset.artefactId || '';
+      const cachedData = await this.getMetadata(trigger, img);
+      metadata = cachedData.metadata;
+      apiParams = cachedData.apiParams;
 
-      const apiParams = {
-        type: globalData.kind || 'paintings',
-        artefactId,
-        imageType: imageCategory,
-        resourceId: `${img.id}.tif`,
-        lang: globalData.langCode,
-      };
-
-      if (imageSubcategory) {
-        apiParams.subImageType = imageSubcategory;
+      // Update download button visibility
+      if (metadata && metadata.isDownloadable !== undefined) {
+        updateDownloadButtonVisibility(trigger, metadata.isDownloadable);
       }
-
-      metadata = await fetchMetaExifData(apiParams);
 
       // Store API params for later use when saving
       globalData.currentMetadataParams = apiParams;
@@ -526,7 +591,7 @@ class ImageViewer {
       // Populate metadata form with fetched data
       populateMetadataForm(metadata);
     }
-    
+
     // Store current image info for later caption updates
     globalData.currentImage = { ...img, url };
 
@@ -984,6 +1049,19 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     if (target.dataset.jsImageSelector) {
       imageViewer.filterImageStripe(target);
+    }
+  }, false);
+
+  // Prefetch metadata on mouseover
+  document.addEventListener('mouseover', async (ev) => {
+    const { target } = ev;
+    const imageItem = target.closest('[data-js-change-image]');
+
+    if (imageItem && imageViewer) {
+      const cachedData = await imageViewer.prefetchMetadata(imageItem);
+      if (cachedData && cachedData.metadata && cachedData.metadata.isDownloadable !== undefined) {
+        updateDownloadButtonVisibility(imageItem, cachedData.metadata.isDownloadable);
+      }
     }
   }, false);
 

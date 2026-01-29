@@ -53,7 +53,6 @@ exports.getImageStripe = (eleventy, { content }, langCode, config, hasSeperator 
       const title = image.metadata && image.metadata[langCode]
         ? eleventy.altText(image.metadata[langCode].description)
         : `${key}`;
-      const isDownloadable = image.download && image.download === true;
 
       // Prepare download sizes data for tooltip
       const downloadSizes = image.sizes ? Object.keys(image.sizes)
@@ -63,12 +62,14 @@ exports.getImageStripe = (eleventy, { content }, langCode, config, hasSeperator 
           dimensions: image.sizes[size].dimensions,
         })) : [];
 
-      const downloadSpan = isDownloadable && downloadSizes.length > 0
+      // Download button is always rendered, but download status will be set at runtime via metadata-exif API
+      const downloadSpan = downloadSizes.length > 0
         ? `<button class="download-interaction" 
              role="button" 
              title="${eleventy.translate ? eleventy.translate('downloadIllustration', langCode) : 'Download'}" 
              data-js-overlay-open='{"target":"download"}'
-             data-js-image-download='${JSON.stringify(downloadSizes)}'>
+             data-js-image-download='${JSON.stringify(downloadSizes)}'
+             data-is-downloadable="false">
            </button>`
         : '';
 
