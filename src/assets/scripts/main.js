@@ -3,9 +3,6 @@
 
 const globalData = objectData;
 
-// Cache for metadata to avoid redundant API calls
-globalData.metadataCache = {};
-
 /* Parse JSON
 ============================================================================ */
 const parseJson = (jsonString) => {
@@ -25,7 +22,9 @@ const populateMetadataForm = (metadata) => {
   // This should be injected by the server-side template
   const fieldMappings = window.metadataFieldMappings || [];
 
-  fieldMappings.forEach(({ formId, metadataKey, lang, type }) => {
+  fieldMappings.forEach(({
+    formId, metadataKey, lang, type,
+  }) => {
     const inputField = document.querySelector(`[data-id="${formId}"]`);
     if (!inputField) return;
 
@@ -63,59 +62,127 @@ const updateDownloadButtonVisibility = (triggerElement, isDownloadable) => {
   downloadButton.setAttribute('data-is-downloadable', isDownloadable ? 'true' : 'false');
 };
 
-/* Fetch EXIF metadata from API
+/* Metadata Manager
 ============================================================================ */
-const fetchMetaExifData = async (params) => {
-  const baseUrl = objectData.metadataExifApiEndpoint;
-
-  // Validierung der erforderlichen Parameter
-  const requiredParams = ['type', 'artefactId', 'imageType', 'resourceId', 'lang'];
-  const missingParam = requiredParams.find((param) => !params[param]);
-  if (missingParam) {
-    return null;
+/* Manages metadata fetching, caching, and API communication for image data.
+   Provides static methods for retrieving metadata from the EXIF API endpoint
+   with automatic caching to minimize redundant requests. */
+class MetadataManager {
+  static init() {
+    MetadataManager.cache = {};
   }
 
-  const {
-    type,
-    artefactId,
-    imageType,
-    resourceId,
-    lang,
-    subImageType,
-  } = params;
-
-  // URL mit Query-Parametern aufbauen
-  const typeParam = `type=${encodeURIComponent(type)}`;
-  const artefactParam = `artefactId=${encodeURIComponent(artefactId)}`;
-  const imageTypeParam = `imageType=${encodeURIComponent(imageType)}`;
-  const resourceParam = `resourceId=${encodeURIComponent(resourceId)}`;
-  const langParam = `lang=${encodeURIComponent(lang)}`;
-
-  let url = `${baseUrl}?${typeParam}&${artefactParam}&${imageTypeParam}&${resourceParam}&${langParam}`;
-
-  // Optional: subImageType hinzufügen, falls vorhanden
-  if (subImageType) {
-    url += `&subImageType=${encodeURIComponent(subImageType)}`;
+  static getCacheKey(artefactId, imageCategory, imageSubcategory, imageId) {
+    return `${artefactId}_${imageCategory}_${imageSubcategory}_${imageId}`;
   }
 
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-KEY': globalData.metadataApiKey,
-      },
-    });
+  static getFromCache(artefactId, imageCategory, imageSubcategory, imageId) {
+    const cacheKey = MetadataManager.getCacheKey(artefactId, imageCategory, imageSubcategory, imageId);
+    return MetadataManager.cache[cacheKey] || null;
+  }
 
-    if (!response.ok) {
+  static setToCache(artefactId, imageCategory, imageSubcategory, imageId, data) {
+    const cacheKey = MetadataManager.getCacheKey(artefactId, imageCategory, imageSubcategory, imageId);
+    MetadataManager.cache[cacheKey] = data;
+  }
+
+  static buildApiParams(artefactId, imageCategory, imageSubcategory, imageId) {
+    const apiParams = {
+      type: globalData.kind || 'paintings',
+      artefactId,
+      imageType: imageCategory,
+      resourceId: `${imageId}.tif`,
+      lang: globalData.langCode,
+    };
+
+    if (imageSubcategory) {
+      apiParams.subImageType = imageSubcategory;
+    }
+
+    return apiParams;
+  }
+
+  static async fetchMetadata(apiParams) {
+    const baseUrl = objectData.metadataExifApiEndpoint;
+
+    // Validate required parameters
+    const requiredParams = ['type', 'artefactId', 'imageType', 'resourceId', 'lang'];
+    const missingParam = requiredParams.find((param) => !apiParams[param]);
+    if (missingParam) {
       return null;
     }
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    return null;
+    const {
+      type,
+      artefactId,
+      imageType,
+      resourceId,
+      lang,
+      subImageType,
+    } = apiParams;
+
+    // Build URL with query parameters
+    const typeParam = `type=${encodeURIComponent(type)}`;
+    const artefactParam = `artefactId=${encodeURIComponent(artefactId)}`;
+    const imageTypeParam = `imageType=${encodeURIComponent(imageType)}`;
+    const resourceParam = `resourceId=${encodeURIComponent(resourceId)}`;
+    const langParam = `lang=${encodeURIComponent(lang)}`;
+
+    let url = `${baseUrl}?${typeParam}&${artefactParam}&${imageTypeParam}&${resourceParam}&${langParam}`;
+
+    // Optional: add subImageType if available
+    if (subImageType) {
+      url += `&subImageType=${encodeURIComponent(subImageType)}`;
+    }
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-KEY': globalData.metadataApiKey,
+        },
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return null;
+    }
   }
-};
+
+  static async getMetadata(artefactId, imageCategory, imageSubcategory, imageId) {
+    // Check cache first
+    const cachedData = MetadataManager.getFromCache(artefactId, imageCategory, imageSubcategory, imageId);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // Fetch and cache if not available
+    const apiParams = MetadataManager.buildApiParams(artefactId, imageCategory, imageSubcategory, imageId);
+    const metadata = await MetadataManager.fetchMetadata(apiParams);
+
+    const dataToCache = {
+      metadata,
+      apiParams,
+    };
+
+    MetadataManager.setToCache(artefactId, imageCategory, imageSubcategory, imageId, dataToCache);
+
+    return dataToCache;
+  }
+
+  static getMetadataFromTrigger(trigger, img) {
+    const imageCategory = trigger.dataset.imageCategory || '';
+    const imageSubcategory = trigger.dataset.imageSubcategory || '';
+    const artefactId = trigger.dataset.artefactId || '';
+
+    return MetadataManager.getMetadata(artefactId, imageCategory, imageSubcategory, img.id);
+  }
+}
 
 /* Global Notification
 ============================================================================ */
@@ -444,7 +511,6 @@ class ImageViewer {
   }
 
   setCaption(img, metadata) {
-
     const { translations } = globalData;
     const { langCode } = globalData;
     const captionId = 'ImageDescTitle';
@@ -480,10 +546,16 @@ class ImageViewer {
     const data = [];
 
     data.push({ name: translations.fileName[langCode], content: fileName });
-    if (metadata && metadata.fileType && metadata.fileType[langCode]) data.push({ name: translations.kindOfImage[langCode], content: metadata.fileType[langCode] });
+    if (metadata && metadata.fileType && metadata.fileType[langCode]) {
+      data.push({ name: translations.kindOfImage[langCode], content: metadata.fileType[langCode] });
+    }
     if (metadata && metadata.date) data.push({ name: translations.date[langCode], content: metadata.date });
-    if (metadata && metadata.created && metadata.created[langCode]) data.push({ name: translations.authorAndRights[langCode], content: metadata.created[langCode] });
-    if (metadata && metadata.source && metadata.source[langCode]) data.push({ name: translations.source[langCode], content: metadata.source[langCode] });
+    if (metadata && metadata.created && metadata.created[langCode]) {
+      data.push({ name: translations.authorAndRights[langCode], content: metadata.created[langCode] });
+    }
+    if (metadata && metadata.source && metadata.source[langCode]) {
+      data.push({ name: translations.source[langCode], content: metadata.source[langCode] });
+    }
 
     const completeData = getCompleteImageData(data);
     const caption = `
@@ -507,59 +579,17 @@ class ImageViewer {
     this.activeTrigger = trigger;
   }
 
-  getCacheKeyAndParams(trigger, img) {
-    const imageCategory = trigger.dataset.imageCategory || '';
-    const imageSubcategory = trigger.dataset.imageSubcategory || '';
-    const artefactId = trigger.dataset.artefactId || '';
-    
-    const cacheKey = `${artefactId}_${imageCategory}_${imageSubcategory}_${img.id}`;
-    
-    const apiParams = {
-      type: globalData.kind || 'paintings',
-      artefactId,
-      imageType: imageCategory,
-      resourceId: `${img.id}.tif`,
-      lang: globalData.langCode,
-    };
-
-    if (imageSubcategory) {
-      apiParams.subImageType = imageSubcategory;
-    }
-
-    return { cacheKey, apiParams };
-  }
-
-  async getMetadata(trigger, img) {
-    const { cacheKey, apiParams } = this.getCacheKeyAndParams(trigger, img);
-    
-    // Check cache first
-    if (globalData.metadataCache[cacheKey]) {
-      return globalData.metadataCache[cacheKey];
-    }
-    
-    // Fetch and cache if not available
-    const metadata = await fetchMetaExifData(apiParams);
-    const cachedData = {
-      metadata,
-      apiParams,
-    };
-    
-    globalData.metadataCache[cacheKey] = cachedData;
-
-    return cachedData;
-  }
-
-  async prefetchMetadata(trigger) {
-    if (!trigger) return;
+  prefetchMetadata(trigger) {
+    if (!trigger) return null;
 
     const data = parseJson(trigger.dataset.jsChangeImage);
-    if (!data) return;
+    if (!data) return null;
 
     const { imageStack } = globalData;
     const img = imageStack[data.key].images.filter((image) => image.id === data.id).shift();
-    if (!img) return;
+    if (!img) return null;
 
-    return await this.getMetadata(trigger, img);
+    return MetadataManager.getMetadataFromTrigger(trigger, img);
   }
 
   async showImage(type, id, trigger) {
@@ -576,7 +606,7 @@ class ImageViewer {
     let apiParams = null;
 
     if (trigger) {
-      const cachedData = await this.getMetadata(trigger, img);
+      const cachedData = await MetadataManager.getMetadataFromTrigger(trigger, img);
       metadata = cachedData.metadata;
       apiParams = cachedData.apiParams;
 
@@ -844,6 +874,10 @@ const createDialogManager = (dialog, options = {}) => {
 document.addEventListener('DOMContentLoaded', (event) => {
   const searchResults = getSearchResults(objectData.kind);
 
+  /* Initialize Metadata Manager
+  --------------------------------------------------------------------------  */
+  MetadataManager.init();
+
   /* Switchable Content
   --------------------------------------------------------------------------  */
   const switchableContentList = document.querySelectorAll('[data-js-switchable-content]');
@@ -1008,8 +1042,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     if (target.closest('.js-edit-metadata')) {
-      const element = target.closest('.js-edit-metadata');
-      const { id } = element;
+      // Metadata editing logic would go here
     }
 
     if (target.closest('.js-expand-additional-content')) {
@@ -1119,7 +1152,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
   // Initialize download overlay
   initDownloadOverlay();
-1
+
   /* Metadata Form Clipboard Actions
   ============================================================================ */
   // Helper function to show messages
@@ -1148,7 +1181,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const fieldMappings = window.metadataFieldMappings || [];
     const metadataObject = {};
 
-    fieldMappings.forEach(({ formId, metadataKey, lang, type }) => {
+    fieldMappings.forEach(({
+      formId, metadataKey, lang, type,
+    }) => {
       const inputField = document.querySelector(`[data-id="${formId}"]`);
       if (!inputField) return;
 
@@ -1266,7 +1301,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
           imageViewer.setCaption(globalData.currentImage, metadataObject);
         }
       } catch (err) {
-        console.error('Error saving metadata:', err);
         showMessage('Fehler beim Speichern der Metadaten', 'error');
       }
     });
