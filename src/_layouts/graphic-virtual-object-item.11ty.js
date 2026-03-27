@@ -69,7 +69,7 @@ const editionMap = {
   '122': 'w?)',
   '123': 'x?)',
   '124': 'y?)',
-  '125': 'z?)',  
+  '125': 'z?)'
 };
 
 const generateReprint = (eleventy, id, masterData, collections) => {
