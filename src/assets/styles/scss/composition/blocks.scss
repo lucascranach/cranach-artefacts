@@ -32,12 +32,12 @@
 
   &.has-separator {
     padding-top: $s;
-    border-top: solid $border-stroke-weight-s $darken-medium;
+    border-top: solid $border-stroke-weight-s $darken;
   }
 
   &.has-strong-separator {
     padding-top: $s;
-    border-top: solid $border-stroke-weight-s $darken-medium;
+    border-top: solid $border-stroke-weight-s $darken;
   }
 
   &__headline {
