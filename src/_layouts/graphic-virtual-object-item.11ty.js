@@ -233,6 +233,7 @@ exports.render = function (pageData) {
       <div id="page">
         ${navigation}
         ${masterData}
+        
         <section id="reprints" class="leporello-reprints js-main-content">
           <h2 class="leporello-reprints__headline">${this.translate('impressions', langCode)}</h2>
           ${reprintsLevel0} <!-- Unbekannter Zustand -->
