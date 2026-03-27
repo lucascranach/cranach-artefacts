@@ -139,7 +139,7 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
                 <img src="${item.imgSrc}" alt="${title}" loading="lazy">
               </div>
               <figcaption class="artefact-card__content">
-                <p class="artefact-card__text">${item.id}<br>${cardText.join(', ', cardText)}${editionVisibleID}</p>
+                <p class="artefact-card__text"><strong>${cardText.join(', ', cardText)}${editionVisibleID}</strong><br>${item.id}</p>
               </figcaption>
             </a>
           </figure>
