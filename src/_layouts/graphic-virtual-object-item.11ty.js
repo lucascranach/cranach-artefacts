@@ -116,7 +116,15 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
   const editionsInCondition = [...(new Set(reprints.map((reprint) => reprint.editionNumber)))];
   const editionDescriptions = content.dating.historicEventInformations.filter(((event) => event.eventType === 'EDITION'));
 
-  const editionsList = editionsInCondition.sort((a, b) => a - b).map((editionNumber) => {
+  // Custom sort: A, A?, B, B?, C, C?, ... Z, Z?, unklar
+  const getSortKey = (editionNumber) => {
+    const num = parseInt(editionNumber, 10);
+    if (num === 26) return 9999; // "unklar" kommt ganz zum Schluss
+    if (num >= 100) return (num - 100) * 10 + 1; // A? (100) = 1, B? (101) = 11, etc.
+    return num * 10; // A (0) = 0, B (1) = 10, etc.
+  };
+
+  const editionsList = editionsInCondition.sort((a, b) => getSortKey(a) - getSortKey(b)).map((editionNumber) => {
     const edition = editionDescriptions.find((event) => event.editionNumber === editionNumber);
     const description = edition ? edition.remarks : '';
     const reprintsList = reprints.filter((reprint) => reprint.editionNumber === editionNumber);
