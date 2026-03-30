@@ -127,7 +127,7 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
         const title = eleventy.altText(item.title);
         const editionId = item.editionNumber ? editionMap[item.editionNumber] : '';
         const editionTitle = item.editionNumber ? ` (${editionId})` : '';
-        const editionVisibleID = item.editionNumber ? ` ${editionTitle}` : '';
+        // const editionVisibleID = item.editionNumber ? ` ${editionTitle}` : '';
         const cardText = [];
         if (item.date) cardText.push(item.date);
         if (item.repository) cardText.push(item.repository);
@@ -139,7 +139,7 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
                 <img src="${item.imgSrc}" alt="${title}" loading="lazy">
               </div>
               <figcaption class="artefact-card__content">
-                <p class="artefact-card__text"><strong>${cardText.join(', ', cardText)}${editionVisibleID}</strong><br>${item.id}</p>
+                <p class="artefact-card__text">${item.id}<br>${cardText.join(', ', cardText)}</p>
               </figcaption>
             </a>
           </figure>
