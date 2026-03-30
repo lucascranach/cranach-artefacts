@@ -5,7 +5,7 @@ const classificationSnippet = require('./classification.11ty');
 const titleSnippet = require('./title.11ty');
 const representantImageSnippet = require('./representant-image.11ty');
 const attributionSnippet = require('./attribution.11ty');
-const datingSnippet = require('./dating.11ty');
+const datingSnippet = require('./dating-graphics.11ty');
 const signatureSnippet = require('./signature.11ty');
 const inscriptionsAndLabelsSnippet = require('./inscriptions-and-labels.11ty');
 
@@ -46,6 +46,7 @@ exports.getMasterData = (eleventy, pageData) => {
   const header = getHeader(eleventy, data, langCode);
   const attribution = attributionSnippet.getAttribution(eleventy, data, langCode);
   const dating = datingSnippet.getDating(eleventy, data, langCode);
+  const usages = datingSnippet.getDating(eleventy, data, langCode, 'usageDates');
   const copy = descriptionSnippet.getCopyText(eleventy, data);
   const image = representantImageSnippet.getRepresentant(eleventy, data);
   const dimensions = dimensionsSnippet.getDimensions(eleventy, data, langCode);
@@ -76,6 +77,7 @@ exports.getMasterData = (eleventy, pageData) => {
             <div class="block">
               ${attribution}
               ${dating}
+              ${usages}
               ${dimensions}
               ${signature}
               ${inscriptions}

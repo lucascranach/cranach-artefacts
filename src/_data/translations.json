@@ -195,6 +195,14 @@
     "de": "Datierungen",
     "en": "Production dates"
   },
+    "usageDate": {
+    "de": "Verwendung",
+    "en": "Printing period"
+  },
+  "usageDates": {
+    "de": "Verwendung",
+    "en": "Printing periods"
+  },
   "permalink": {
     "de": "Permalink",
     "en": "Persistent Link"
