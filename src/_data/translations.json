@@ -167,6 +167,26 @@
     "de": "Zuschreibungen",
     "en": "Attributions"
   },
+  "printer": {
+    "de": "Drucker",
+    "en": "Printer"
+  },
+  "printers": {
+    "de": "Drucker",
+    "en": "Printers"
+  },
+  "publisher": {
+    "de": "Verleger",
+    "en": "Publisher"
+  },
+  "publishers": {
+    "de": "Verleger",
+    "en": "Publisher"
+  },
+  "officins": {
+    "de": "Officin",
+    "en": "Officina"
+  },
   "productionDate": {
     "de": "Datierung",
     "en": "Production date"
@@ -447,7 +467,7 @@
     "de": "Zugehörige Werke",
     "en": "Connected Works"
   },
-  "overallViewOfThePiece":{
+  "overallViewOfThePiece": {
     "de": "Gesamtansicht des Werkes",
     "en": "Overall view of the piece"
   },
@@ -582,7 +602,7 @@
   "zur-suche": {
     "de": "zur Suche",
     "en": "go to search"
-  }, 
+  },
   "zur-werksuche": {
     "de": "zur Werksuche",
     "en": "go to works search"
@@ -635,20 +655,19 @@
     "de": "Literatur anzeigen",
     "en": "Show Literature"
   },
-  "worksDiscussedInPublication":{
+  "worksDiscussedInPublication": {
     "de": "In der Publikation besprochene Werke",
     "en": "Works discussed in publication"
   },
-  "IDENTICAL_WATERMARK":
-  {
+  "IDENTICAL_WATERMARK": {
     "de": "Identisches Wasserzeichen",
     "en": "Identical watermark"
   },
-  "ON_SAME_SHEET":{
+  "ON_SAME_SHEET": {
     "de": "Auf dem selben Blatt",
     "en": "On the same sheet"
   },
-  "PART_OF_SERIES":{
+  "PART_OF_SERIES": {
     "de": "Teil einer Serie",
     "en": "Part of series"
   },
@@ -660,13 +679,11 @@
     "de": "Lizenz:",
     "en": "License:"
   },
-
   "licenseText": {
     "de": "Creative Commons Namensnennung 4.0 International",
     "en": "Creative Commons Attribution 4.0 International"
-  }
-  ,
-  "SHOW_ALL":{ 
+  },
+  "SHOW_ALL": {
     "de": "Alle anzeigen",
     "en": "Show all"
   }

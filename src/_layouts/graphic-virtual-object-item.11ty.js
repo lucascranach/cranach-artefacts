@@ -116,7 +116,15 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
   const editionsInCondition = [...(new Set(reprints.map((reprint) => reprint.editionNumber)))];
   const editionDescriptions = content.dating.historicEventInformations.filter(((event) => event.eventType === 'EDITION'));
 
-  const editionsList = editionsInCondition.sort((a, b) => a - b).map((editionNumber) => {
+  // Custom sort: A, A?, B, B?, C, C?, ... Z, Z?, unklar
+  const getSortKey = (editionNumber) => {
+    const num = parseInt(editionNumber, 10);
+    if (num === 26) return 9999; // "unklar" kommt ganz zum Schluss
+    if (num >= 100) return (num - 100) * 10 + 1; // A? (100) = 1, B? (101) = 11, etc.
+    return num * 10; // A (0) = 0, B (1) = 10, etc.
+  };
+
+  const editionsList = editionsInCondition.sort((a, b) => getSortKey(a) - getSortKey(b)).map((editionNumber) => {
     const edition = editionDescriptions.find((event) => event.editionNumber === editionNumber);
     const description = edition ? edition.remarks : '';
     const reprintsList = reprints.filter((reprint) => reprint.editionNumber === editionNumber);
@@ -127,7 +135,7 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
         const title = eleventy.altText(item.title);
         const editionId = item.editionNumber ? editionMap[item.editionNumber] : '';
         const editionTitle = item.editionNumber ? ` (${editionId})` : '';
-        const editionVisibleID = item.editionNumber ? ` ${editionTitle}` : '';
+        // const editionVisibleID = item.editionNumber ? ` ${editionTitle}` : '';
         const cardText = [];
         if (item.date) cardText.push(item.date);
         if (item.repository) cardText.push(item.repository);
@@ -139,7 +147,7 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
                 <img src="${item.imgSrc}" alt="${title}" loading="lazy">
               </div>
               <figcaption class="artefact-card__content">
-                <p class="artefact-card__text">${item.id}<br>${cardText.join(', ', cardText)}${editionVisibleID}</p>
+                <p class="artefact-card__text">${item.id}<br>${cardText.join(', ', cardText)}</p>
               </figcaption>
             </a>
           </figure>
@@ -233,6 +241,7 @@ exports.render = function (pageData) {
       <div id="page">
         ${navigation}
         ${masterData}
+        
         <section id="reprints" class="leporello-reprints js-main-content">
           <h2 class="leporello-reprints__headline">${this.translate('impressions', langCode)}</h2>
           ${reprintsLevel0} <!-- Unbekannter Zustand -->
