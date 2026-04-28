@@ -1,5 +1,5 @@
-// Dating Types = "productionDates", "usageDates"
-exports.getDating = (eleventy, { content }, langCode, datingType = 'productionDates') => {
+// Dating Types = "productionDate", "usageDate"
+exports.getDating = (eleventy, { content }, langCode, datingType = 'productionDate') => {
   const prefix = `${content.metadata.id}${datingType}`;
   const numberOfItems = 2;
 
@@ -8,7 +8,7 @@ exports.getDating = (eleventy, { content }, langCode, datingType = 'productionDa
       ...content.dating.historicEventInformations]
     : [{ text: content.dating.dated, remarks: content.dating.remarks, editionNumber: content.dating.editionNumber }];
 
-  const filteredCombinedDates = datingType === 'usageDates'
+  const filteredCombinedDates = datingType === 'usageDate'
     ? combinedDates.filter(date => date.eventType === 'EDITION')
     : combinedDates.filter(date => date.eventType !== 'EDITION');
 
@@ -30,7 +30,7 @@ exports.getDating = (eleventy, { content }, langCode, datingType = 'productionDa
   });
 
   const datesFullList = sortedCombinedDates.map((item) => ({ text: `${item.text}`, remark: item.remarks }));
-  const label = datesFullList.length > 1 ? eleventy.translate(datingType, langCode) : eleventy.translate('productionDate', langCode);
+  const label = eleventy.translate(datingType, langCode);
   const remarkDataTableData = {
     id: 'Dates',
     content: datesFullList,

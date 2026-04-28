@@ -16,7 +16,7 @@ exports.getDating = (eleventy, { content }, langCode) => {
   });
 
   const datesFullList = sortedCombinedDates.map((item) => ({ text: `${item.text}`, remark: item.remarks }));
-  const label = datesFullList.length > 1 ? eleventy.translate('productionDates', langCode) : eleventy.translate('productionDate', langCode);
+  const label = eleventy.translate('productionDate', langCode);
   const remarkDataTableData = {
     id: 'Dates',
     content: datesFullList,
