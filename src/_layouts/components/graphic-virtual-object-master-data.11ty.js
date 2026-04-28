@@ -46,7 +46,7 @@ exports.getMasterData = (eleventy, pageData) => {
   const header = getHeader(eleventy, data, langCode);
   const attribution = attributionSnippet.getAttribution(eleventy, data, langCode);
   const dating = datingSnippet.getDating(eleventy, data, langCode);
-  const usages = datingSnippet.getDating(eleventy, data, langCode, 'usageDates');
+  const usages = datingSnippet.getDating(eleventy, data, langCode, 'usageDate');
   const copy = descriptionSnippet.getCopyText(eleventy, data);
   const image = representantImageSnippet.getRepresentant(eleventy, data);
   const dimensions = dimensionsSnippet.getDimensions(eleventy, data, langCode);
