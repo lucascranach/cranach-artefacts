@@ -1,0 +1,132 @@
+.meta-data-form {
+  form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 1em;
+  }
+
+  .clipboard-actions {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: .1em;
+    & .label {
+      font-size: .8em;
+    }
+
+    &--checkbox {
+      flex-direction: row;
+      align-items: center;
+      margin-top: 1em;
+      gap: 1em;
+
+      input[type="checkbox"] {
+        width: 1.2em;
+        height: 1.2em;
+        cursor: pointer;
+      }
+
+      .label {
+        margin: 0;
+        cursor: pointer;
+        font-size: 1em;
+      }
+    }
+  }
+
+  label {
+    color: #444;
+  }
+
+  @keyframes animateIn {
+    0% {
+      right: -100%;
+    }
+    10% {
+      right: 0;
+    }
+    90% {
+      right: 0;
+    }
+    100% {
+      right: -100%;
+    }
+  }
+
+  .message {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    padding: 1em;
+    border-radius: 3px;
+
+    &.info {
+      background-color: #ffd364;
+    }
+    &.error {
+      background-color: #ff6e6e;
+    }
+    &.success {
+      background-color: #71ff99;
+    }
+
+    &.animate-in {
+      animation: animateIn 3s ease-in-out;
+    }
+  }
+
+  input[type="text"] {
+    padding-top: 0.72em;
+    border: none;
+    border-bottom: 1px solid #444;
+    background-color: none;
+    outline: none;
+    transition: all .2s cubic-bezier(0.075, 0.82, 0.165, 1);
+    &:focus {
+      padding-top: 1.17em;
+    }
+  }
+
+  button {
+    display: flex;
+    display: flex;
+    align-items: center;
+    align-items: center;
+    justify-content: center;
+    padding: .27rem .72rem .27rem .45rem;
+    border-width: 0;
+    background-color: #feb701;
+    border-radius: 2px;
+    color: #fff;
+    cursor: pointer;
+    font-size: inherit;
+    font-weight: 500;
+    gap: .2em;
+
+    &:active {
+      background-color: #cb9201;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: .5;
+      pointer-events: none;
+      user-select: none;
+    }
+  }
+
+  #copyButton, #pasteButton {
+    margin-top: 1em;
+    background-color: transparent;
+    color: #000000;
+  }
+
+  .hidden {
+    display: none;
+  }  
+}

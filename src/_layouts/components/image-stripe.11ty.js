@@ -4,6 +4,43 @@ exports.getImageStripe = (eleventy, { content }, langCode, config, hasSeperator 
   const cdaId = content.metadata.id;
   const objectTitle = eleventy.altText(content.metadata.title);
 
+  // Extract artefact ID, image category and subcategory from tiles URL
+  // URL pattern without subcategory: .../imageserver/ARTEFACT_ID/category/FILENAME
+  // URL pattern with subcategory: .../imageserver/ARTEFACT_ID/category/subcategory/FILENAME
+  const extractImageCategoryInfo = (tilesUrl) => {
+    if (!tilesUrl) return { artefactId: '', imageCategory: '', imageSubcategory: '' };
+
+    // Split URL by / and get the last segments
+    const parts = tilesUrl.split('/');
+    const { length } = parts;
+
+    if (length >= 4) {
+      // Check if we have 4 segments from the end: ARTEFACT_ID/category/subcategory/FILENAME
+      // or 3 segments: ARTEFACT_ID/category/FILENAME
+      const segment1 = parts[length - 2]; // Could be subcategory or category
+      const segment2 = parts[length - 3]; // Could be category or ARTEFACT_ID
+      const segment3 = parts[length - 4]; // Could be ARTEFACT_ID or something else
+
+      // If segment2 looks like a category (starts with number_), then segment1 is subcategory
+      if (segment2.match(/^\d+_/)) {
+        return {
+          artefactId: segment3,
+          imageCategory: segment2,
+          imageSubcategory: segment1,
+        };
+      }
+
+      // Otherwise segment1 is the category (no subcategory)
+      return {
+        artefactId: segment2,
+        imageCategory: segment1,
+        imageSubcategory: '',
+      };
+    }
+
+    return { artefactId: '', imageCategory: '', imageSubcategory: '' };
+  };
+
   const imageStripe = Object.keys(contentTypes).map((key) => {
     if (!imageStack || !imageStack[key]) return '';
     const { images } = imageStack[key];
@@ -16,7 +53,6 @@ exports.getImageStripe = (eleventy, { content }, langCode, config, hasSeperator 
       const title = image.metadata && image.metadata[langCode]
         ? eleventy.altText(image.metadata[langCode].description)
         : `${key}`;
-      const isDownloadable = image.download && image.download === true;
 
       // Prepare download sizes data for tooltip
       const downloadSizes = image.sizes ? Object.keys(image.sizes)
@@ -26,12 +62,14 @@ exports.getImageStripe = (eleventy, { content }, langCode, config, hasSeperator 
           dimensions: image.sizes[size].dimensions,
         })) : [];
 
-      const downloadSpan = isDownloadable && downloadSizes.length > 0
+      // Download button is always rendered, but download status will be set at runtime via metadata-exif API
+      const downloadSpan = downloadSizes.length > 0
         ? `<button class="download-interaction" 
              role="button" 
              title="${eleventy.translate ? eleventy.translate('downloadIllustration', langCode) : 'Download'}" 
              data-js-overlay-open='{"target":"download"}'
-             data-js-image-download='${JSON.stringify(downloadSizes)}'>
+             data-js-image-download='${JSON.stringify(downloadSizes)}'
+             data-is-downloadable="false">
            </button>`
         : '';
 
@@ -39,6 +77,16 @@ exports.getImageStripe = (eleventy, { content }, langCode, config, hasSeperator 
           <div class="image-buttons-container js-is-collectable">
             ${downloadSpan}
           </div>`;
+
+      const imageCategoryInfo = extractImageCategoryInfo(image.sizes.tiles.src);
+
+      // Remove leading number and underscore, convert to lowercase (e.g., "11_RKD" -> "rkd", "01_Overall" -> "overall")
+      const cleanCategory = imageCategoryInfo.imageCategory.replace(/^\d+_/, '').toLowerCase();
+      const cleanSubcategory = imageCategoryInfo.imageSubcategory.replace(/^\d+_/, '').toLowerCase();
+
+      const dataArtefactId = imageCategoryInfo.artefactId ? `data-artefact-id="${imageCategoryInfo.artefactId}"` : '';
+      const dataImageCategory = cleanCategory ? `data-image-category="${cleanCategory}"` : '';
+      const dataImageSubcategory = cleanSubcategory ? `data-image-subcategory="${cleanSubcategory}"` : '';
 
       return `
         <li
@@ -51,6 +99,9 @@ exports.getImageStripe = (eleventy, { content }, langCode, config, hasSeperator 
           data-image-id="${image.id}"
           data-image-preview-url="${image.sizes.small.src}"
           data-image-tiles-url="${image.sizes.tiles.src}"
+          ${dataArtefactId}
+          ${dataImageCategory}
+          ${dataImageSubcategory}
           data-js-change-image='{"key":"${key}","id":"${image.id}"}'>
           <img loading="lazy" src="${image.sizes.small.src}" alt="${title}" >
           ${buttonContainer}

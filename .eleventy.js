@@ -258,7 +258,7 @@ const getDrawingsCollection = (lang) => {
 
 const getPaintingsCollection = (lang) => {
   const paintingsForLang = paintingsData[lang];
-  const devObjects = ["IT_GdU_1631","PRIVATE_NONE-P310", "DE_NJ_NONE-NJ001a", "DE_KAZW_NONE-KAZW001A"];
+  const devObjects = ["IT_GdU_1631","PRIVATE_NONE-P310", "DE_NJ_NONE-NJ001a", "DE_KAZW_NONE-KAZW001A", "DE_RMK_M6_FR-none"];
 
   const paintings = config.onlyDevObjects === true 
     ? paintingsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))

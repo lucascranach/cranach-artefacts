@@ -1,0 +1,153 @@
+
+{
+  "fields": [
+    {
+      "formId": "image-description-de",
+      "label": "image-description-de",
+      "metadataKey": "description",
+      "lang": "de",
+      "suggestions": [
+        "Gesamtaufnahme",
+        "Gesamtaufnahme, Rückseite",
+        "Gesamtaufnahme, Streiflicht",
+        "Gesamtaufnahme, Durchlicht",
+        "Detail",
+        "Detail, Wasserzeichen",
+        "Mikroskopaufnahme",
+        "Übersicht zur Lokalisierung der Mikroskopaufnahmen",
+        "Röntgenaufnahme, Gesamtaufnahme",
+        "Röntgenaufnahme, Detail",
+        "Infrarot Reflektografie, Gesamtaufnahme",
+        "Infrarot-Reflektografie, Detail",
+        "OSIRIS Infrarot-Reflektografie, 900-1700nm",
+        "Querschliff",
+        "Rückseite der Reproduktion / des Fotos"
+      ]
+    },
+    {
+      "formId": "image-description-en",
+      "label": "image-description-en",
+      "metadataKey": "description",
+      "lang": "en",
+      "suggestions": [
+        "Overall",
+        "Overall, reverse",
+        "Overall, raking light",
+        "Overall, transmitted light",
+        "Detail",
+        "Detail, watermark",
+        "Photomicrograph",
+        "Location of the Photomicrographs",
+        "X-Radiograph, overall",
+        "X-Radiograph, detail",
+        "Infrared Reflectogram, overall",
+        "Infrared Reflectogram, detail",
+        "OSIRIS Infrared-Reflectogram, 900-1700nm",
+        "Cross-section",
+        "Reverse of photograph / reproduction"
+      ]
+    },
+    {
+      "formId": "file-type-de",
+      "label": "file-type-de",
+      "metadataKey": "fileType",
+      "lang": "de",
+      "suggestions": [
+        "Digitale Aufnahme",
+        "Scan eines Diapositivs",
+        "Scan eines 35 mm Diapositivs",
+        "Scan eines Schwarz-Weiß-Fotos",
+        "Scan einer Reproduktion",
+        "Scan eines Schwarz-Weiß-Negativs",
+        "Scan eines Dokumentes",
+        "Scan einer IR-Fotografie",
+        "Scan eines Röntgenfilms",
+        "Scan einer UV-Fluoreszenz-Fotografie",
+        "Digitale Montage gescannter Röntgenfilme",
+        "Digitale Montage einer analogen IR-Reflektografie",
+        "Montage digitaler Aufnahmen (Indigo Alpha NIR)",
+        "Analoge Aufnahme mit Hamamatsu Vidicon-Kamera, nachfolgend digitalisiert"
+      ]
+    },
+    {
+      "formId": "file-type-en",
+      "label": "file-type-en",
+      "metadataKey": "fileType",
+      "lang": "en",
+      "suggestions": [
+        "Digital image",
+        "Scan of colour slide",
+        "Scan of 35 mm colour slide",
+        "Scan of black and white photograph",
+        "Scan of reproduction",
+        "Scan of black and white negative",
+        "Scan of a document",
+        "Scan of IR-photograph",
+        "Scan of a X-ray film",
+        "Scan of UV-fluorescence photograph",
+        "Digital assembly of scanned X-ray films",
+        "Digital assembly of analogue IR-Reflectogram",
+        "Assembly of digital images (Indigo Alpha NIR)",
+        "Digital image converted from Hamamatsu vidicon",
+        "Digital mosaic converted from Hamamatsu vidicon"
+      ]
+    },
+    {
+      "formId": "image-created-de",
+      "label": "image-created-de",
+      "metadataKey": "created",
+      "lang": "de",
+      "suggestions": [
+        "Gunnar Heydenreich, cda"
+      ]
+    },
+    {
+      "formId": "image-created-en",
+      "label": "image-created-en",
+      "metadataKey": "created",
+      "lang": "en",
+      "suggestions": [
+        "Gunnar Heydenreich, cda"
+      ]
+    },
+    {
+      "formId": "image-source-de",
+      "label": "image-source-de",
+      "metadataKey": "source",
+      "lang": "de",
+      "suggestions": [
+        "cda"
+      ]
+    },
+    {
+      "formId": "image-source-en",
+      "label": "image-source-en",
+      "metadataKey": "source",
+      "lang": "en",
+      "suggestions": [
+        "cda"
+      ]
+    },
+    {
+      "formId": "image-date",
+      "label": "image-date",
+      "metadataKey": "date",
+      "lang": null,
+      "suggestions": []
+    },
+    {
+      "formId": "has-watermark",
+      "label": "has-watermark",
+      "metadataKey": "hasWatermark",
+      "type": "checkbox",
+      "lang": null
+    },
+    {
+      "formId": "is-downloadable",
+      "label": "is-downloadable",
+      "metadataKey": "isDownloadable",
+      "type": "checkbox",
+      "lang": null
+    }
+  ]
+}

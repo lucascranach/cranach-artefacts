@@ -129,48 +129,60 @@
 
       .image-buttons-container {
         position: absolute;
-        top: -50px;
+        top: 0;
         left: 0;
         display: flex;
         flex-direction: row;
         gap: $xs;
+      }
+
+      .collect-interaction{
+        position: relative;
+        top: -50px;
         transition: top $tr-fast;
-      }
-
-      &:hover .image-buttons-container {
-        top: 0;
-      }
-
-      &[data-collected=false] .collect-interaction{
         @include interaction-button-base;
-
-        &::after{
-          content: "playlist_add";
-        }
       }
 
-      &[data-collected=true] .collect-interaction{
-        @include interaction-button-base;
+      &[data-collected=false] .collect-interaction::after {
+        content: "playlist_add";
+      }
+
+      &[data-collected=true] .collect-interaction {
         background-color: $darkest;
         color: $accent;
 
-
-        &::after{
+        &::after {
           content: "playlist_remove";
         }
       }
 
+      &:hover .collect-interaction {
+        top: 0;
+      }
+
       .download-interaction{
         position: relative;
+        top: -50px;
         display: block;
         padding: none;
         background:none;
+        opacity: 0;
+        transition: top $tr-fast, opacity $tr-fast, visibility $tr-fast;
+        visibility: hidden;
         @include interaction-button-base;
         
-
         &::after{
           content: "download";
         }
+
+        &[data-is-downloadable="true"] {
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+
+      &:hover .download-interaction[data-is-downloadable="true"] {
+        top: 0;
       }
 
 
