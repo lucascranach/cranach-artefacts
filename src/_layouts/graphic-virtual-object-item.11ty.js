@@ -127,7 +127,7 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
 
   const editionsList = editionsInCondition.sort((a, b) => getSortKey(a) - getSortKey(b)).map((editionNumber) => {
     const edition = editionDescriptions.find((event) => event.editionNumber === editionNumber);
-    const description = edition ? edition.remarks : '';
+    const description = edition && edition.remarks ? eleventy.getFormatedText(edition.remarks) : '';
     const reprintsList = reprints.filter((reprint) => reprint.editionNumber === editionNumber);
     const reprintsListHtml = reprintsList.map(
       (item) => {
@@ -137,10 +137,6 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
         const editionId = item.editionNumber ? resolveEditionLabel(item.editionNumber) : '';
         const editionTitle = item.editionNumber ? ` (${editionId})` : '';
         // const editionVisibleID = item.editionNumber ? ` ${editionTitle}` : '';
-        const cardText = [];
-        if (item.date) cardText.push(item.date);
-        if (item.repository) cardText.push(item.repository);
-
         return `
           <figure class="artefact-card" title="${item.id}">
             <a href="${url}" class="js-go-to-reprint">
@@ -148,7 +144,7 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
                 <img src="${item.imgSrc}" alt="${title}" loading="lazy">
               </div>
               <figcaption class="artefact-card__content">
-                <p class="artefact-card__text">${item.id}<br>${cardText.join(', ', cardText)}</p>
+                <p class="artefact-card__text">${item.repository || ''}<br>${item.id}</p>
               </figcaption>
             </a>
           </figure>
