@@ -255,6 +255,10 @@
     "de": "Auflage",
     "en": "Edition"
   },
+  "nochOffen":{
+    "de": "noch offen",
+    "en": "uncertain"
+  },
   "publishEdition": {
     "de": "Jahrgang",
     "en": "Issue"
