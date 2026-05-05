@@ -33,6 +33,7 @@ jobs:
         run: npm run preview
         env:
           API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
+          API_KEY: ${{ secrets.API_KEY }}
           API_METADATA_EXIF_ENDPOINT: ${{ secrets.API_METADATA_EXIF_ENDPOINT }}
           CACHE_FOLDER: ${{ secrets.CACHE_FOLDER }}
           METADATA_API_KEY: ${{ secrets.METADATA_API_KEY }}
