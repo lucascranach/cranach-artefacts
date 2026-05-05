@@ -25,6 +25,9 @@ const navigationSnippet = require('./navigation.11ty');
 const datingSnippet = require('./dating.11ty');
 const attributionSnippet = require('./attribution.11ty');
 
+const metadataDrawerSnippet = require('./metadata-drawer.11ty');
+const metadataMappings = require('../../_data/metadata-mappings.json');
+
 const ART_TECH_EXAMINATION = 'ArtTechExamination';
 const CONDITION_REPORT = 'ConditionReport';
 const CONSERVATION_REPORT = 'ConservationReport';
@@ -97,6 +100,11 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
   const cranachCollectBaseUrl = eleventy.getCranachCollectBaseUrl();
   const cranachCollectScript = config.cranachCollect.script;
 
+  const metadataDrawer = metadataDrawerSnippet.getMetadataDrawer();
+  const shouldIncludeMetadataEditor = process.env.ELEVENTY_ENV === 'internal'
+    || process.env.ELEVENTY_ENV === 'development'
+    || process.env.ELEVENTY_ENV === 'preview';
+
   return `<!doctype html> 
   <html lang="${langCode}">
     <head>
@@ -107,6 +115,8 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
       <link href="${eleventy.url('/assets/images/favicon.svg')}" rel="icon" type="image/svg">
       <script>
         const objectData = {};
+        objectData.g = "${process.env.API_METADATA_EXIF_ENDPOINT}";
+        objectData.metadataApiKey = "${shouldIncludeMetadataEditor ? process.env.METADATA_API_KEY : ''}";
         objectData.langCode = "${langCode}";
         objectData.imageStack = ${imageStack};
         objectData.baseUrl = "${baseUrl}/${langCode}";
@@ -115,9 +125,12 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
         objectData.translations = ${translationsClient};
         objectData.asseturl = "${eleventy.url('/assets')}";
         objectData.inventoryNumber = "${id}";
+        objectData.kind = 'graphics';
+        window.metadataFieldMappings = ${JSON.stringify(metadataMappings.fields)};        
       </script>
     </head>
     <body>
+      ${shouldIncludeMetadataEditor ? metadataDrawer : ''}    
       <div id="page">
         ${navigation}
         ${masterData}
