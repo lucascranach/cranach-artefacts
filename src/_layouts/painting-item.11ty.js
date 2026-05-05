@@ -137,6 +137,7 @@ exports.render = function (pageData) {
         objectData.inventoryNumber = "${id}";
         objectData.idExtension = "${data.content.objectName}";
         objectData.navigationObjects = '${navigationObjects}';
+        objectData.kind = "${data.content.entityType}";
         window.metadataFieldMappings = ${JSON.stringify(metadataMappings.fields)};
       </script>
     </head>

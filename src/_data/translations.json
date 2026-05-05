@@ -189,19 +189,11 @@
   },
   "productionDate": {
     "de": "Datierung",
-    "en": "Production date"
+    "en": "Dating"
   },
-  "productionDates": {
-    "de": "Datierungen",
-    "en": "Production dates"
-  },
-    "usageDate": {
+  "usageDate": {
     "de": "Verwendung",
-    "en": "Printing period"
-  },
-  "usageDates": {
-    "de": "Verwendung",
-    "en": "Printing periods"
+    "en": "Chronology"
   },
   "permalink": {
     "de": "Permalink",
@@ -262,6 +254,10 @@
   "edition": {
     "de": "Auflage",
     "en": "Edition"
+  },
+  "nochOffen":{
+    "de": "noch offen",
+    "en": "uncertain"
   },
   "publishEdition": {
     "de": "Jahrgang",

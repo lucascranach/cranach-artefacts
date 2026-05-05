@@ -43,7 +43,7 @@ const editionMap = {
   '23': 'x)',
   '24': 'y)',
   '25': 'z)',
-  '26': 'unklar',
+  '26': null,
   '100': 'a?)',
   '101': 'b?)',
   '102': 'c?)',
@@ -113,6 +113,7 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
   const { masterData } = content;
 
   // condition = zustand, edition = auflage
+  const resolveEditionLabel = (num) => (num === '26' ? eleventy.translate('nochOffen', langCode) : editionMap[num]) ?? '';
   const editionsInCondition = [...(new Set(reprints.map((reprint) => reprint.editionNumber)))];
   const editionDescriptions = content.dating.historicEventInformations.filter(((event) => event.eventType === 'EDITION'));
 
@@ -126,20 +127,16 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
 
   const editionsList = editionsInCondition.sort((a, b) => getSortKey(a) - getSortKey(b)).map((editionNumber) => {
     const edition = editionDescriptions.find((event) => event.editionNumber === editionNumber);
-    const description = edition ? edition.remarks : '';
+    const description = edition && edition.remarks ? eleventy.getFormatedText(edition.remarks) : '';
     const reprintsList = reprints.filter((reprint) => reprint.editionNumber === editionNumber);
     const reprintsListHtml = reprintsList.map(
       (item) => {
         generateReprint(eleventy, item.id, masterData, collections);
         const url = `${baseUrl}/${langCode}/${item.id}/`;
         const title = eleventy.altText(item.title);
-        const editionId = item.editionNumber ? editionMap[item.editionNumber] : '';
+        const editionId = item.editionNumber ? resolveEditionLabel(item.editionNumber) : '';
         const editionTitle = item.editionNumber ? ` (${editionId})` : '';
         // const editionVisibleID = item.editionNumber ? ` ${editionTitle}` : '';
-        const cardText = [];
-        if (item.date) cardText.push(item.date);
-        if (item.repository) cardText.push(item.repository);
-
         return `
           <figure class="artefact-card" title="${item.id}">
             <a href="${url}" class="js-go-to-reprint">
@@ -147,7 +144,7 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
                 <img src="${item.imgSrc}" alt="${title}" loading="lazy">
               </div>
               <figcaption class="artefact-card__content">
-                <p class="artefact-card__text">${item.id}<br>${cardText.join(', ', cardText)}</p>
+                <p class="artefact-card__text">${item.repository || ''}<br>${item.id}</p>
               </figcaption>
             </a>
           </figure>
@@ -155,7 +152,7 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
       },
     );
 
-    const editionTitle = `${this.translate('edition', langCode)} ${editionMap[editionNumber.toString()]}`;
+    const editionTitle = `${this.translate('edition', langCode)} ${resolveEditionLabel(editionNumber.toString())}`;
     const editionDate = edition ? edition.text : '';
 
     return `
