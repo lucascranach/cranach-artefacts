@@ -90,7 +90,7 @@ exports.getImageStripe = (eleventy, { content }, langCode, config, hasSeperator 
 
       return `
         <li
-          class="image-stripe-list__item has-interaction js-is-collectable"
+          class="image-stripe-list__item has-interaction"
           title="${image.id}"
           data-collected="false"
           data-cda-id="${cdaId}"
