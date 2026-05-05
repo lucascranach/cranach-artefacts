@@ -164,6 +164,8 @@
         position: relative;
         top: -50px;
         display: block;
+        overflow: hidden;
+        width: 0;
         padding: none;
         background:none;
         opacity: 0;
@@ -176,6 +178,8 @@
         }
 
         &[data-is-downloadable="true"] {
+          overflow: visible;
+          width: auto;
           opacity: 1;
           visibility: visible;
         }
