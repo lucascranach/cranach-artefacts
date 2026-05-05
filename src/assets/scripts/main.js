@@ -1114,8 +1114,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
       onBeforeShow: (imageData) => {
         // Handle both old and new data structures
         const downloadData = imageData.downloadSizes || imageData;
-        // Generate download links
-        const downloadLinks = downloadData.map((sizeData) => {
+        // Generate download links (only show images where longest side <= 4400px)
+        const downloadLinks = downloadData.filter((sizeData) => {
+          const { width, height } = sizeData.dimensions || {};
+          if (!width || !height) return true;
+          return Math.max(width, height) <= 4400;
+        }).map((sizeData) => {
           if (!translations[`size-${sizeData.size}`]) return '';
           const sizeLabel = translations[`size-${sizeData.size}`][langCode];
           const dimensions = ` (${sizeData.dimensions.width}×${sizeData.dimensions.height}px)`;
