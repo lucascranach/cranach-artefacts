@@ -74,7 +74,7 @@ exports.getImageStripe = (eleventy, { content }, langCode, config, hasSeperator 
         : '';
 
       const buttonContainer = `
-          <div class="image-buttons-container js-is-collectable">
+          <div class="image-buttons-container">
             ${downloadSpan}
           </div>`;
 
@@ -90,7 +90,7 @@ exports.getImageStripe = (eleventy, { content }, langCode, config, hasSeperator 
 
       return `
         <li
-          class="image-stripe-list__item has-interaction"
+          class="image-stripe-list__item has-interaction js-is-collectable"
           title="${image.id}"
           data-collected="false"
           data-cda-id="${cdaId}"

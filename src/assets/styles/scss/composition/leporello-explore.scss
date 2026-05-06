@@ -143,6 +143,10 @@
         @include interaction-button-base;
       }
 
+      &:hover .collect-interaction {
+        top: 0;
+      }
+
       &[data-collected=false] .collect-interaction::after {
         content: "playlist_add";
       }
@@ -156,28 +160,21 @@
         }
       }
 
-      &:hover .collect-interaction {
-        top: 0;
-      }
-
       .download-interaction{
         position: relative;
         top: -50px;
-        display: block;
         overflow: hidden;
         width: 0;
-        padding: none;
-        background:none;
         opacity: 0;
         transition: top $tr-fast, opacity $tr-fast, visibility $tr-fast;
         visibility: hidden;
-        @include interaction-button-base;
         
         &::after{
           content: "download";
         }
 
         &[data-is-downloadable="true"] {
+          @include interaction-button-base;
           overflow: visible;
           width: auto;
           opacity: 1;
