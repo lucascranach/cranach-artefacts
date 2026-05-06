@@ -161,24 +161,17 @@
       }
 
       .download-interaction{
-        position: relative;
-        top: -50px;
-        overflow: hidden;
-        width: 0;
-        opacity: 0;
-        transition: top $tr-fast, opacity $tr-fast, visibility $tr-fast;
-        visibility: hidden;
-        
+        display: none;
+
         &::after{
           content: "download";
         }
 
         &[data-is-downloadable="true"] {
           @include interaction-button-base;
-          overflow: visible;
-          width: auto;
-          opacity: 1;
-          visibility: visible;
+          position: relative;
+          top: -50px;
+          transition: top $tr-fast;
         }
       }
 
