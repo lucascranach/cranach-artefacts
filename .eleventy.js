@@ -193,19 +193,21 @@ const drawingsData = {
 const translations = require("./src/_data/translations.json");
 const translationsClient = require("./src/_data/translations-client.json");
 
+const escapeOrderedLists = (str) => str.replace(/^(\s*)(\d+)\. /gm, '$1$2\\. ');
+
 const markdownItRenderer = new markdownIt('commonmark', {
   html: true,
   breaks: true,
   linkify: true,
   typographer: true
-});
+}).disable([ 'list', 'heading' ]);;
 
 const simpleMarkdownItRenderer = new markdownIt('commonmark', {
   html: true,
   breaks: true,
   linkify: true,
   typographer: true
-}).disable([ 'list' ]);
+}).disable([ 'list', 'heading' ]);
 
 const pathPrefix = config.pathPrefix[process.env.ELEVENTY_ENV];
 
@@ -238,7 +240,7 @@ const appendToFile = (path, str) => {
 
 const getDrawingsCollection = (lang) => {
   const drawingsForLang = drawingsData[lang];
-  const devObjects = ['Z_DE_GNMN_Hz56'];
+  const devObjects = ['DE_KSW_KK95', 'DE_GNMN_Hz56'];
 
   const drawings = config.onlyDevObjects === true
     ? drawingsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
@@ -372,7 +374,7 @@ const getGraphicsRealObjectsCollection = (lang) => {
 
 const getGraphicsVirtualObjectsCollection = (lang) => {
   const graphicsVirtualObjectsForLang = graphicsVirtualObjectData[lang];
-  const devObjects = ["LC_HVI-5_4","LC_HVI-12_3","LC_HVI-19-21_10","LC_HVI-22_24","LC_HVI-24_26","LC_HVI-29_30e", "LC_HVI-56_79"]; // , "ANO_H-NONE-022", "LC_HVI-9_8", "LC_HVI-19-21_18","MIB_H-NONE-001", "MIB_H-NONE-002",  "LC_HVI-57_80", "LC_HVI-19-21_16", "LC_HVI-68_92", "LC_HVI-56_79"
+  const devObjects = ["LC_HVI-81_105", "LC_HVI-75_96-57","LC_HVI-5_4","LC_HVI-12_3","LC_HVI-19-21_10","LC_HVI-22_24","LC_HVI-24_26","LC_HVI-29_30e", "LC_HVI-56_79"]; // , "ANO_H-NONE-022", "LC_HVI-9_8", "LC_HVI-19-21_18","MIB_H-NONE-001", "MIB_H-NONE-002",  "LC_HVI-57_80", "LC_HVI-19-21_16", "LC_HVI-68_92", "LC_HVI-56_79"
   
   const graphicsVirtualObjects = config.onlyDevObjects === true 
     ? graphicsVirtualObjectsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
@@ -405,7 +407,7 @@ const markdownify = (str, mode = 'full') => {
   const newStr = str.match(/\[(.*?)\]\((.*?)\)/) 
     ? str.replace(/\[(.*?)\]\((.*?)\)/g, '<a class="link-to-source" href="$2">[$1]</a>') 
     : str;
-  let renderedText = mode === 'full' ? markdownItRenderer.render(newStr) : simpleMarkdownItRenderer.render(newStr);
+  let renderedText = mode === 'full' ? markdownItRenderer.render(escapeOrderedLists(newStr)) : simpleMarkdownItRenderer.render(newStr);
   renderedText = renderedText.replace(/<pre><code>(.*?)<\/code><\/pre>/sg, replacePre);
 
   return `<div class="markdown-it">${renderedText}</div>`;
