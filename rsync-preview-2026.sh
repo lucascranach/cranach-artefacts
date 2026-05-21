@@ -1,1 +1,1 @@
-rsync -avzO --no-perms -e 'ssh -p 1602' ./docs/ vschaefer@lucascranach.org:/var/www/html/intern/artefacts-preview/
+rsync -avz -e 'ssh -p 1602' ./docs/ cnoss@lucascranach.org:/home/cnoss/html/intern/artefacts-preview-2026-manual/
