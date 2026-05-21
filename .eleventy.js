@@ -240,7 +240,7 @@ const appendToFile = (path, str) => {
 
 const getDrawingsCollection = (lang) => {
   const drawingsForLang = drawingsData[lang];
-  const devObjects = ['DE_KSW_KK95', 'DE_GNMN_Hz56'];
+  const devObjects = ['DE_AGGD_BII-3','DE_KSW_KK95', 'DE_GNMN_Hz56'];
 
   const drawings = config.onlyDevObjects === true
     ? drawingsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
@@ -603,15 +603,24 @@ module.exports = function (eleventyConfig) {
     return graphicsRealObjectData[lang];
   });
 
-  eleventyConfig.addJavaScriptFunction("getRefObjectMeta", (collection, id) => {
-    if (!collection) return {};
-    const reference = collection.filter(item => item.inventoryNumber === id);
+  eleventyConfig.addJavaScriptFunction("getRefObjectMeta", (id, lang) => {
+    const collections = [
+      paintingsData[lang]?.items,
+      graphicsVirtualObjectData[lang]?.items,
+      graphicsRealObjectData[lang]?.items,
+      drawingsData[lang]?.items,
+    ].filter(Boolean);
 
-    if (!reference[0]) return false;
-    const metadata = reference[0].metadata;
-    metadata.owner = reference[0].owner;
+    for (const collection of collections) {
+      const reference = collection.find(item => item.inventoryNumber === id);
+      if (reference) {
+        const metadata = reference.metadata;
+        metadata.owner = reference.owner;
+        return metadata;
+      }
+    }
 
-    return metadata;
+    return false;
   });
 
   eleventyConfig.addJavaScriptFunction("getLitRefTableData", (ref, id) => {

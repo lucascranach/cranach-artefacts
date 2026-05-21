@@ -6,11 +6,11 @@ const getReferences = (eleventy, content, type) => {
   const referenceTypes = eleventy.getReferenceTypes();
   const { references } = content;
 
-  if (!references) return;
-  if (!referenceTypes[type]) return;
+  if (!references) return null;
+  if (!referenceTypes[type]) return null;
   const referenceType = referenceTypes[type];
 
-  if (!references[referenceType]) return;
+  if (!references[referenceType]) return null;
   return references[referenceType];
 
   // if (entityType === 'paintings') return content.references;
@@ -37,7 +37,7 @@ exports.getReference = (eleventy, data, langCode, type, isOpen = false) => {
     }
 
     const typeContentItemList = typeContentItems.map((item) => {
-      const refObjectMeta = eleventy.getRefObjectMeta(content.currentCollection, item.inventoryNumber);
+      const refObjectMeta = eleventy.getRefObjectMeta(item.inventoryNumber, langCode);
       const refObjectLink = `${baseUrl}/${langCode}/${refObjectMeta.id}/`;
       return `
         <div class="related-item-wrap">
@@ -80,7 +80,7 @@ exports.getReference = (eleventy, data, langCode, type, isOpen = false) => {
           </div>
         <ul class="overlay__grid">
           ${typeContentItemsOverlay.map((item) => {
-    const refObjectMeta = eleventy.getRefObjectMeta(content.currentCollection, item.inventoryNumber);
+    const refObjectMeta = eleventy.getRefObjectMeta(item.inventoryNumber, langCode);
     const refObjectLink = `${baseUrl}/${langCode}/${refObjectMeta.id}/`;
     return `
           <li class="overlay__item">

@@ -3,7 +3,6 @@ const convertStatesToHeadline = (text) => {
   return text.replace(regex, `<h2>$&</h2>`);
 };
 
-
 exports.getCopyText = (eleventy, { content }) => {
   const numberOfWords = 50;
   const fullText = content.description;
