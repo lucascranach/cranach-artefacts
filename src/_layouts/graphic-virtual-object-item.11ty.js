@@ -72,7 +72,7 @@ const editionMap = {
   '125': 'z?)'
 };
 
-const generateReprint = (eleventy, id, masterData, collections) => {
+const generateReprint = (eleventy, id, masterData, collections, virtualTitle) => {
   const data = {
     content: eleventy.getReprintData(id, langCode),
   };
@@ -85,6 +85,8 @@ const generateReprint = (eleventy, id, masterData, collections) => {
   data.content.currentCollection = langCode === 'en'
     ? collections.graphicsRealObjectsEN
     : collections.graphicsRealObjectsDE;
+
+  data.content.virtualTitle = virtualTitle;
 
   const reprint = graphicsRealObject.getRealObject(eleventy, data, langCode, masterData);
   eleventy.writeDocument(path, filename, reprint);
@@ -131,7 +133,7 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
     const reprintsList = reprints.filter((reprint) => reprint.editionNumber === editionNumber);
     const reprintsListHtml = reprintsList.map(
       (item) => {
-        generateReprint(eleventy, item.id, masterData, collections);
+        generateReprint(eleventy, item.id, masterData, collections, content.metadata.title);
         const url = `${baseUrl}/${langCode}/${item.id}/`;
         const title = eleventy.altText(item.title);
         const editionId = item.editionNumber ? resolveEditionLabel(item.editionNumber) : '';
