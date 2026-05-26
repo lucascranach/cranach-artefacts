@@ -46,7 +46,7 @@ exports.getNavigation = (eleventy, langCode, objectId, type) => {
     </ul>
   `;
 
-  const metadataDrawerSwitcher = process.env.ELEVENTY_ENV === 'internal' || process.env.ELEVENTY_ENV === 'development'
+  const metadataDrawerSwitcher = ['internal', 'preview', 'development', 'developmentDE'].includes(process.env.ELEVENTY_ENV)
     ? `<div data-icon="edit_note"
       class="js-toggle-metadata-drawer"
       title="Open metadata editor"

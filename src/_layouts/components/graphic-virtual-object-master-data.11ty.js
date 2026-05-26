@@ -5,8 +5,10 @@ const classificationSnippet = require('./classification.11ty');
 const titleSnippet = require('./title.11ty');
 const representantImageSnippet = require('./representant-image.11ty');
 const attributionSnippet = require('./attribution.11ty');
-const datingSnippet = require('./dating.11ty');
+const datingSnippet = require('./dating-graphics.11ty');
 const signatureSnippet = require('./signature.11ty');
+const inscriptionsAndLabelsSnippet = require('./inscriptions-and-labels.11ty');
+
 const dimensionsSnippet = require('./dimensions.11ty');
 const descriptionSnippet = require('./description.11ty');
 const exhibitonsSnippet = require('./exhibitons.11ty');
@@ -44,10 +46,14 @@ exports.getMasterData = (eleventy, pageData) => {
   const header = getHeader(eleventy, data, langCode);
   const attribution = attributionSnippet.getAttribution(eleventy, data, langCode);
   const dating = datingSnippet.getDating(eleventy, data, langCode);
+  const usages = datingSnippet.getDating(eleventy, data, langCode, 'usageDate');
   const copy = descriptionSnippet.getCopyText(eleventy, data);
   const image = representantImageSnippet.getRepresentant(eleventy, data);
   const dimensions = dimensionsSnippet.getDimensions(eleventy, data, langCode);
   const signature = signatureSnippet.getSignature(eleventy, data, langCode);
+  const inscriptions = inscriptionsAndLabelsSnippet.getInscriptions(eleventy, data, langCode);
+  const labels = inscriptionsAndLabelsSnippet.getLabels(eleventy, data, langCode);
+
   const ids = identificationSnippet.getIds(eleventy, data, langCode);
   const exhibitions = exhibitonsSnippet.getExhibitions(eleventy, data, langCode);
   const additionalTextInformation = additionalTextInformationSnippet.getAdditionalTextInformation(eleventy, data, langCode);
@@ -71,8 +77,11 @@ exports.getMasterData = (eleventy, pageData) => {
             <div class="block">
               ${attribution}
               ${dating}
+              ${usages}
               ${dimensions}
               ${signature}
+              ${inscriptions}
+              ${labels}
             </div>
             <div class="block">
               ${ids}

@@ -5,12 +5,28 @@
   border: none;
   border-bottom: solid $border-stroke-weight transparent;
   margin: $quad 0;
+  background-color: $lighter;
   border-radius: $radius-s;
   font-weight: $fw-light;
 
   $self: &;
 
+  &:hover {
+    background-color: $light;
+    cursor: pointer;
+
+    #{ $self }__icon{
+      transform: rotate(180deg);
+      transform-origin: center center;
+    }
+  }
+
+
   &--is-transparent {
+    background-color: transparent;
+  }
+
+  &--is-transparent:hover {
     background-color: transparent;
   }
 
@@ -29,14 +45,4 @@
       font-weight: $fw-semibold;
     }
   }
-
-  &:hover {
-    cursor: pointer;
-
-    #{ $self }__icon{
-      transform: rotate(180deg);
-      transform-origin: center center;
-    }
-  }
-
 }

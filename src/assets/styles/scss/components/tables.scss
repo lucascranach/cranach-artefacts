@@ -150,7 +150,7 @@
 
   &__data {
     width: $term-width;
-    padding-right: $half;
+
 
     &.is-wide {
       width: $term-width-large;
@@ -159,12 +159,11 @@
 
   &__remark {
     width: auto;
-    padding-left: $half;
     color: $darken-strong;
   }
 
-  td {
-    border-top: solid $border-stroke-weight-s $darken-medium;
+  tr + tr td {
+    border-top: solid $border-stroke-weight-s $darken;
   }
 
   &.is-two-third {
@@ -200,7 +199,7 @@
   $self: &;
 
   td {
-    border-top: solid $border-stroke-weight-s $darken-medium;
+    border-top: solid $border-stroke-weight-s $darken;
 
     &+td {
       padding-left: $m;

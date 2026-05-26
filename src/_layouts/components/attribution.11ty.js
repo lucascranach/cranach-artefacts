@@ -12,7 +12,7 @@ exports.getAttribution = (eleventy, { content }, langCode) => {
 
     const fullName = fragments.join(' ');
 
-    if (!entityType.match(/graphics/)) return fullName;
+    if (!entityType || !entityType.match(/graphics/)) return fullName;
 
     const nameAndRole = [];
     nameAndRole.push(fullName);
@@ -44,5 +44,71 @@ exports.getAttribution = (eleventy, { content }, langCode) => {
       </dd>
     </dl>
     ${allAttributions}
+  `;
+};
+
+exports.getPrinter = (eleventy, { content }, langCode) => {
+  const printers = content.involvedPersons.filter((person) => person.roleType === 'PRINTER');
+
+  if (printers.length === 0) return '';
+
+  const label = printers.length > 1 ? eleventy.translate('printers', langCode) : eleventy.translate('printer', langCode);
+  const printerNames = printers.map((person) => {
+    const fragments = [];
+    if (person.prefix) fragments.push(person.prefix);
+    if (person.name) fragments.push(person.name);
+    if (person.suffix) fragments.push(person.suffix);
+    return fragments.join(' ');
+  });
+
+  return `
+    <dl class="definition-list is-grid">
+      <dt class="definition-list__term">${label}</dt>
+      <dd class="definition-list__definition">${printerNames.join('<br>')}</dd>
+    </dl>
+  `;
+};
+
+exports.getPublisher = (eleventy, { content }, langCode) => {
+  const publishers = content.involvedPersons.filter((person) => person.roleType === 'PUBLISHER');
+
+  if (publishers.length === 0) return '';
+
+  const label = publishers.length > 1 ? eleventy.translate('publishers', langCode) : eleventy.translate('publisher', langCode);
+  const publisherNames = publishers.map((person) => {
+    const fragments = [];
+    if (person.prefix) fragments.push(person.prefix);
+    if (person.name) fragments.push(person.name);
+    if (person.suffix) fragments.push(person.suffix);
+    return fragments.join(' ');
+  });
+
+  return `
+    <dl class="definition-list is-grid">
+      <dt class="definition-list__term">${label}</dt>
+      <dd class="definition-list__definition">${publisherNames.join('<br>')}</dd>
+    </dl>
+  `;
+};
+
+exports.getOfficin = (eleventy, { content }, langCode) => {
+  const officins = content.involvedPersons.filter((person) => person.roleType === 'OFFICIN');
+
+  if (officins.length === 0) return '';
+
+  const label = officins.length > 1 ? eleventy.translate('officins', langCode) : eleventy.translate('officin', langCode);
+  const officinNames = officins.map((person) => {
+    const fragments = [];
+    if (person.prefix) fragments.push(person.prefix);
+    if (person.name) fragments.push(person.name);
+    if (person.suffix) fragments.push(person.suffix);
+    return fragments.join(' ');
+  });
+
+  return `
+    <dl class="definition-list is-grid">
+      <dt class="definition-list__term">${label}</dt>
+      <dd class="definition-list__definition">${officinNames.join('<br>')}</dd>
+    </dl>
   `;
 };

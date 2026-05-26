@@ -1,5 +1,7 @@
 # Changelog Cranach Artefacts
 
+
+
 ## v0.6.0
 Mit dieser Version werden folgende Fehler behoben/ Funktionen/ Inhalte bereit gestellt:
 - Permalinks sind jetzt klickbar

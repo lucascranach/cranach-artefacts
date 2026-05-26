@@ -2,7 +2,7 @@ let config;
 
 const metaDataHeader = require('./meta-data-head.11ty');
 const improveCda = require('./improve-cda.11ty');
-const pageDateSnippet = require('./page-date.11ty');
+// const pageDateSnippet = require('./page-date.11ty');
 const copyrightSnippet = require('./copyright.11ty');
 const citeCdaSnippet = require('./cite-cda.11ty');
 const mediumSnippet = require('./medium.11ty');
@@ -23,6 +23,10 @@ const referencesSnippet = require('./references.11ty');
 const conditionSnippet = require('./condition.11ty');
 const navigationSnippet = require('./navigation.11ty');
 const datingSnippet = require('./dating.11ty');
+const attributionSnippet = require('./attribution.11ty');
+
+const metadataDrawerSnippet = require('./metadata-drawer.11ty');
+const metadataMappings = require('../../_data/metadata-mappings.json');
 
 const ART_TECH_EXAMINATION = 'ArtTechExamination';
 const CONDITION_REPORT = 'ConditionReport';
@@ -59,7 +63,8 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
   const dimensions = dimensionsSnippet.getDimensions(eleventy, data, langCode);
   const location = locationSnippet.getLocation(eleventy, data, langCode);
   const signature = signatureSnippet.getSignature(eleventy, data, langCode);
-  const inscriptionsAndLabels = inscriptionsAndLabelsSnippet.getInscriptionsAndLabels(eleventy, data, langCode);
+  const inscriptions = inscriptionsAndLabelsSnippet.getInscriptions(eleventy, data, langCode);
+  const labels = inscriptionsAndLabelsSnippet.getLabels(eleventy, data, langCode);
   const cdaId = identificationSnippet.getCdaId(eleventy, data, langCode);
   const permalink = identificationSnippet.getPermalink(eleventy, data.content.url, langCode);
   const exhibitions = exhibitonsSnippet.getExhibitions(eleventy, data, langCode);
@@ -82,14 +87,23 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
   const citeCda = citeCdaSnippet.getCiteCDA(eleventy, data, langCode);
   const improveCdaSnippet = improveCda.getImproveCDA(eleventy, data, config, langCode);
   const copyright = copyrightSnippet.getCopyright();
-  const pageDate = pageDateSnippet.getPageDate(eleventy, langCode);
+  // const pageDate = pageDateSnippet.getPageDate(eleventy, langCode);
   const condition = conditionSnippet.getCondition(eleventy, data, langCode);
   const medium = mediumSnippet.getMediumOfGraphic(eleventy, data, langCode);
   const shortDescription = descriptionSnippet.getShortDescription(eleventy, data, langCode);
   const dating = datingSnippet.getDating(eleventy, data, langCode);
 
+  const printer = attributionSnippet.getPrinter(eleventy, data, langCode);
+  const publisher = attributionSnippet.getPublisher(eleventy, data, langCode);
+  const officina = attributionSnippet.getOfficin(eleventy, data, langCode);
+
   const cranachCollectBaseUrl = eleventy.getCranachCollectBaseUrl();
   const cranachCollectScript = config.cranachCollect.script;
+
+  const metadataDrawer = metadataDrawerSnippet.getMetadataDrawer();
+  const shouldIncludeMetadataEditor = process.env.ELEVENTY_ENV === 'internal'
+    || process.env.ELEVENTY_ENV === 'development'
+    || process.env.ELEVENTY_ENV === 'preview';
 
   return `<!doctype html> 
   <html lang="${langCode}">
@@ -101,6 +115,8 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
       <link href="${eleventy.url('/assets/images/favicon.svg')}" rel="icon" type="image/svg">
       <script>
         const objectData = {};
+        objectData.g = "${process.env.API_METADATA_EXIF_ENDPOINT}";
+        objectData.metadataApiKey = "${shouldIncludeMetadataEditor ? process.env.METADATA_API_KEY : ''}";
         objectData.langCode = "${langCode}";
         objectData.imageStack = ${imageStack};
         objectData.baseUrl = "${baseUrl}/${langCode}";
@@ -109,9 +125,12 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
         objectData.translations = ${translationsClient};
         objectData.asseturl = "${eleventy.url('/assets')}";
         objectData.inventoryNumber = "${id}";
+        objectData.kind = 'graphics';
+        window.metadataFieldMappings = ${JSON.stringify(metadataMappings.fields)};        
       </script>
     </head>
     <body>
+      ${shouldIncludeMetadataEditor ? metadataDrawer : ''}    
       <div id="page">
         ${navigation}
         ${masterData}
@@ -131,11 +150,15 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
             <div class="block">
               ${condition}
               ${dating}
+              ${printer}
+              ${publisher}
+              ${officina}
               ${medium}
               ${shortDescription}
               ${dimensions}
               ${signature}
-              ${inscriptionsAndLabels}
+              ${inscriptions}
+              ${labels}
               ${cdaId}
               ${permalink}
             </div>

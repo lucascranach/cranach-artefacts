@@ -3,7 +3,7 @@ let config;
 
 const metaDataHeader = require('./components/meta-data-head.11ty');
 const improveCda = require('./components/improve-cda.11ty');
-const pageDateSnippet = require('./components/page-date.11ty');
+// const pageDateSnippet = require('./components/page-date.11ty');
 const copyrightSnippet = require('./components/copyright.11ty');
 const citeCdaSnippet = require('./components/cite-cda.11ty');
 const titleSnippet = require('./components/title.11ty');
@@ -28,6 +28,7 @@ const additionalTextInformationSnippet = require('./components/additional-text-i
 const referencesSnippet = require('./components/references.11ty');
 const navigationSnippet = require('./components/navigation.11ty');
 const metadataDrawerSnippet = require('./components/metadata-drawer.11ty');
+const metadataMappings = require('../_data/metadata-mappings.json');
 
 const ART_TECH_EXAMINATION = 'ArtTechExamination';
 const CONDITION_REPORT = 'ConditionReport';
@@ -37,6 +38,7 @@ const SIMILAR_TO = 'SIMILAR_TO';
 const BELONGS_TO = 'BELONGS_TO';
 const GRAPHIC = 'GRAPHIC';
 const PART_OF_WORK = 'PART_OF_WORK';
+const ON_SAME_SHEET = 'ON_SAME_SHEET';
 
 const getImageStack = ({ content }) => JSON.stringify(content.images);
 const getimageBaseUrl = () => JSON.stringify(config.imageTiles);
@@ -82,7 +84,8 @@ exports.render = function (pageData) {
   const attribution = attributionSnippet.getAttribution(this, data, langCode);
   const location = locationSnippet.getLocation(this, data, langCode);
   const signature = signatureSnippet.getSignature(this, data, langCode);
-  const inscriptionsAndLabels = inscriptionsAndLabelsSnippet.getInscriptionsAndLabels(this, data, langCode);
+  const inscriptions = inscriptionsAndLabelsSnippet.getInscriptions(this, data, langCode);
+  const labels = inscriptionsAndLabelsSnippet.getLabels(this, data, langCode);
   const ids = identificationSnippet.getIds(this, data, langCode);
   const exhibitions = exhibitonsSnippet.getExhibitions(this, data, langCode);
   const provenance = provenanceSnippet.getProvenance(this, data, langCode);
@@ -97,8 +100,8 @@ exports.render = function (pageData) {
   const similarTo = referencesSnippet.getReference(this, data, langCode, SIMILAR_TO);
   const belongsTo = referencesSnippet.getReference(this, data, langCode, BELONGS_TO);
   const graphic = referencesSnippet.getReference(this, data, langCode, GRAPHIC);
-
   const partOfWork = referencesSnippet.getReference(this, data, langCode, PART_OF_WORK, true);
+  const onSameSheet = referencesSnippet.getReference(this, data, langCode, ON_SAME_SHEET);
   const imageDescriptionObjectInfo = imageDescriptionSnippet.getImageDescriptionObjectInfo(data);
   const citeCda = citeCdaSnippet.getCiteCDA(this, data, langCode);
   const improveCdaSnippet = improveCda.getImproveCDA(this, data, config, langCode);
@@ -110,7 +113,9 @@ exports.render = function (pageData) {
   const cranachCollectBaseUrl = this.getCranachCollectBaseUrl();
   const cranachCollectScript = config.cranachCollect.script;
   const metadataDrawer = metadataDrawerSnippet.getMetadataDrawer();
-  const shouldIncludeMetadataEditor = process.env.ELEVENTY_ENV === 'internal' || process.env.ELEVENTY_ENV === 'development';
+  const shouldIncludeMetadataEditor = process.env.ELEVENTY_ENV === 'internal'
+    || process.env.ELEVENTY_ENV === 'development'
+    || process.env.ELEVENTY_ENV === 'preview';
   return `<!doctype html> 
   <html lang="${langCode}">
     <head>
@@ -120,7 +125,7 @@ exports.render = function (pageData) {
       <link href="${this.url('/assets/images/favicon.svg')}" rel="icon" type="image/svg">
       <script>
         const objectData = {};
-        objectData.metadataApiEndpoint = "${shouldIncludeMetadataEditor ? process.env.METADATA_API_ENDPOINT : ''}";
+        objectData.metadataExifApiEndpoint = "${process.env.API_METADATA_EXIF_ENDPOINT}";
         objectData.metadataApiKey = "${shouldIncludeMetadataEditor ? process.env.METADATA_API_KEY : ''}";
         objectData.langCode = "${langCode}";
         objectData.imageStack = ${imageStack};
@@ -132,6 +137,8 @@ exports.render = function (pageData) {
         objectData.inventoryNumber = "${id}";
         objectData.idExtension = "${data.content.objectName}";
         objectData.navigationObjects = '${navigationObjects}';
+        objectData.kind = "${data.content.entityType}";
+        window.metadataFieldMappings = ${JSON.stringify(metadataMappings.fields)};
       </script>
     </head>
     <body>
@@ -156,7 +163,8 @@ exports.render = function (pageData) {
                   ${dating}
                   ${dimensions}
                   ${signature}
-                  ${inscriptionsAndLabels}
+                  ${inscriptions}
+                  ${labels}
                 </div>
                 <div class="block">
                   ${location}
@@ -199,6 +207,7 @@ exports.render = function (pageData) {
             ${similarTo}
             ${belongsTo}
             ${graphic}
+            ${onSameSheet}
           </div>
         </section>
         <section class="final-words">

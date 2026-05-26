@@ -13,17 +13,176 @@ const parseJson = (jsonString) => {
   }
 };
 
-/* Load live metadata from cranach-metadata-service
+/* Populate Metadata Form
 ============================================================================ */
+const populateMetadataForm = (metadata) => {
+  if (!metadata) return;
 
-const setMetadata = async (artefactId, imageId, apiEndpoint, apiKey) => {
-  const metaDataIframe = document.querySelector('iframe');
-  if(!metaDataIframe) return;
-  metaDataIframe.setAttribute(
-    'src',
-    `${apiEndpoint}?artefact=${artefactId}&image=${imageId}&apiKey=${apiKey}`,
-  );
+  // Field mappings will be loaded from the metadata config
+  // This should be injected by the server-side template
+  const fieldMappings = window.metadataFieldMappings || [];
+
+  fieldMappings.forEach(({
+    formId, metadataKey, lang, type,
+  }) => {
+    const inputField = document.querySelector(`[data-id="${formId}"]`);
+    if (!inputField) return;
+
+    let value = '';
+    if (metadata[metadataKey] !== undefined && metadata[metadataKey] !== null) {
+      // If lang is specified, get the language-specific value
+      if (lang && typeof metadata[metadataKey] === 'object') {
+        value = metadata[metadataKey][lang] || '';
+      } else {
+        // For non-multilingual fields like 'date'
+        value = metadata[metadataKey];
+      }
+    }
+
+    // Handle checkbox inputs differently
+    if (type === 'checkbox') {
+      inputField.checked = !!value;
+    } else {
+      inputField.value = value || '';
+    }
+  });
 };
+
+/* Update Download Button Visibility
+============================================================================ */
+const updateDownloadButtonVisibility = (triggerElement, isDownloadable) => {
+  // Find the download button in the same image item
+  const imageItem = triggerElement.closest('.image-stripe-list__item');
+  if (!imageItem) return;
+
+  const downloadButton = imageItem.querySelector('.download-interaction');
+  if (!downloadButton) return;
+
+  // Update the data attribute and visibility
+  downloadButton.setAttribute('data-is-downloadable', isDownloadable ? 'true' : 'false');
+};
+
+/* Metadata Manager
+============================================================================ */
+/* Manages metadata fetching, caching, and API communication for image data.
+   Provides static methods for retrieving metadata from the EXIF API endpoint
+   with automatic caching to minimize redundant requests. */
+class MetadataManager {
+  static init() {
+    MetadataManager.cache = {};
+  }
+
+  static getCacheKey(artefactId, imageCategory, imageSubcategory, imageId) {
+    return `${artefactId}_${imageCategory}_${imageSubcategory}_${imageId}`;
+  }
+
+  static getFromCache(artefactId, imageCategory, imageSubcategory, imageId) {
+    const cacheKey = MetadataManager.getCacheKey(artefactId, imageCategory, imageSubcategory, imageId);
+    return MetadataManager.cache[cacheKey] || null;
+  }
+
+  static setToCache(artefactId, imageCategory, imageSubcategory, imageId, data) {
+    const cacheKey = MetadataManager.getCacheKey(artefactId, imageCategory, imageSubcategory, imageId);
+    MetadataManager.cache[cacheKey] = data;
+  }
+
+  static buildApiParams(artefactId, imageCategory, imageSubcategory, imageId) {
+    const apiParams = {
+      type: globalData.kind || 'paintings',
+      artefactId,
+      imageType: imageCategory,
+      resourceId: `${imageId}.tif`,
+      lang: globalData.langCode,
+    };
+
+    if (imageSubcategory) {
+      apiParams.subImageType = imageSubcategory;
+    }
+
+    return apiParams;
+  }
+
+  static async fetchMetadata(apiParams) {
+    const baseUrl = objectData.metadataExifApiEndpoint;
+
+    // Validate required parameters
+    const requiredParams = ['type', 'artefactId', 'imageType', 'resourceId', 'lang'];
+    const missingParam = requiredParams.find((param) => !apiParams[param]);
+    if (missingParam) {
+      return null;
+    }
+
+    const {
+      type,
+      artefactId,
+      imageType,
+      resourceId,
+      lang,
+      subImageType,
+    } = apiParams;
+
+    // Build URL with query parameters
+    const typeParam = `type=${encodeURIComponent(type)}`;
+    const artefactParam = `artefactId=${encodeURIComponent(artefactId)}`;
+    const imageTypeParam = `imageType=${encodeURIComponent(imageType)}`;
+    const resourceParam = `resourceId=${encodeURIComponent(resourceId)}`;
+    const langParam = `lang=${encodeURIComponent(lang)}`;
+
+    let url = `${baseUrl}?${typeParam}&${artefactParam}&${imageTypeParam}&${resourceParam}&${langParam}`;
+
+    // Optional: add subImageType if available
+    if (subImageType) {
+      url += `&subImageType=${encodeURIComponent(subImageType)}`;
+    }
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-KEY': globalData.metadataApiKey,
+        },
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  static async getMetadata(artefactId, imageCategory, imageSubcategory, imageId) {
+    // Check cache first
+    const cachedData = MetadataManager.getFromCache(artefactId, imageCategory, imageSubcategory, imageId);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // Fetch and cache if not available
+    const apiParams = MetadataManager.buildApiParams(artefactId, imageCategory, imageSubcategory, imageId);
+    const metadata = await MetadataManager.fetchMetadata(apiParams);
+
+    const dataToCache = {
+      metadata,
+      apiParams,
+    };
+
+    MetadataManager.setToCache(artefactId, imageCategory, imageSubcategory, imageId, dataToCache);
+
+    return dataToCache;
+  }
+
+  static getMetadataFromTrigger(trigger, img) {
+    const imageCategory = trigger.dataset.imageCategory || '';
+    const imageSubcategory = trigger.dataset.imageSubcategory || '';
+    const artefactId = trigger.dataset.artefactId || '';
+
+    return MetadataManager.getMetadata(artefactId, imageCategory, imageSubcategory, img.id);
+  }
+}
 
 /* Global Notification
 ============================================================================ */
@@ -351,22 +510,18 @@ class ImageViewer {
     globalData.clipableElements[id] = new ClipableElement(element);
   }
 
-  setCaption(img) {
-    const artefactIdentifier = `${globalData.inventoryNumber}_${globalData.idExtension}`;
-    const imageIdentifier = img.id.replace(`${artefactIdentifier}_`, '');
-    setMetadata(artefactIdentifier, imageIdentifier, globalData.metadataApiEndpoint, globalData.metadataApiKey);
-    const { metadata } = img;
+  setCaption(img, metadata) {
     const { translations } = globalData;
     const { langCode } = globalData;
     const captionId = 'ImageDescTitle';
-    const description = !metadata || !metadata.description
+    const description = !metadata || !metadata.description || !metadata.description[langCode]
       ? `<h3 id="${captionId}" class="image-caption__title is-expand-trigger js-expand-trigger" data-js-expanded="false"
         data-js-expandable="completeImageData">
         ${translations.imageInformation[langCode]}</h3>`
       : `<h3 id="${captionId}" 
           class="image-caption__title is-expand-trigger js-expand-trigger" data-js-expanded="true"
           data-js-expandable="completeImageData">
-          ${metadata.description}</h3>`;
+          ${metadata.description[langCode]}</h3>`;
 
     const getCompleteImageData = (data) => {
       const rows = data.map((item) => `
@@ -391,10 +546,16 @@ class ImageViewer {
     const data = [];
 
     data.push({ name: translations.fileName[langCode], content: fileName });
-    if (metadata && metadata.fileType) data.push({ name: translations.kindOfImage[langCode], content: metadata.fileType });
+    if (metadata && metadata.fileType && metadata.fileType[langCode]) {
+      data.push({ name: translations.kindOfImage[langCode], content: metadata.fileType[langCode] });
+    }
     if (metadata && metadata.date) data.push({ name: translations.date[langCode], content: metadata.date });
-    if (metadata && metadata.created) data.push({ name: translations.authorAndRights[langCode], content: metadata.created });
-    if (metadata && metadata.source) data.push({ name: translations.source[langCode], content: metadata.source });
+    if (metadata && metadata.created && metadata.created[langCode]) {
+      data.push({ name: translations.authorAndRights[langCode], content: metadata.created[langCode] });
+    }
+    if (metadata && metadata.source && metadata.source[langCode]) {
+      data.push({ name: translations.source[langCode], content: metadata.source[langCode] });
+    }
 
     const completeData = getCompleteImageData(data);
     const caption = `
@@ -418,7 +579,20 @@ class ImageViewer {
     this.activeTrigger = trigger;
   }
 
-  showImage(type, id, trigger) {
+  prefetchMetadata(trigger) {
+    if (!trigger) return null;
+
+    const data = parseJson(trigger.dataset.jsChangeImage);
+    if (!data) return null;
+
+    const { imageStack } = globalData;
+    const img = imageStack[data.key].images.filter((image) => image.id === data.id).shift();
+    if (!img) return null;
+
+    return MetadataManager.getMetadataFromTrigger(trigger, img);
+  }
+
+  async showImage(type, id, trigger) {
     const { imageStack } = globalData;
     const { env } = globalData;
     const img = imageStack[type].images.filter((image) => image.id === id).shift();
@@ -426,7 +600,32 @@ class ImageViewer {
     const url = env.match(/development/) ? this.adaptUrl(initialUrl) : initialUrl;
 
     if (trigger) this.handleTrigger(trigger);
-    this.setCaption({ ...img, url });
+
+    // Get metadata from cache or fetch if not available
+    let metadata = null;
+    let apiParams = null;
+
+    if (trigger) {
+      const cachedData = await MetadataManager.getMetadataFromTrigger(trigger, img);
+      metadata = cachedData.metadata;
+      apiParams = cachedData.apiParams;
+
+      // Update download button visibility
+      if (metadata && metadata.isDownloadable !== undefined) {
+        updateDownloadButtonVisibility(trigger, metadata.isDownloadable);
+      }
+
+      // Store API params for later use when saving
+      globalData.currentMetadataParams = apiParams;
+
+      // Populate metadata form with fetched data
+      populateMetadataForm(metadata);
+    }
+
+    // Store current image info for later caption updates
+    globalData.currentImage = { ...img, url };
+
+    this.setCaption({ ...img, url }, metadata);
     this.viewer.open(url);
   }
 
@@ -592,11 +791,92 @@ const reduceNavigation = () => {
   // observer.observe(leporello);
 };
 
+/* Dialog/Overlay Utility Functions
+============================================================================ */
+
+/**
+ * Creates a dialog manager with common functionality for opening/closing dialogs
+ * @param {HTMLElement} dialog - The dialog element
+ * @param {Object} options - Configuration options
+ * @returns {Object} - Dialog manager object with show/hide methods
+ */
+const createDialogManager = (dialog, options = {}) => {
+  if (!dialog) return null;
+
+  const {
+    onBeforeShow = null,
+    onAfterShow = null,
+    onBeforeClose = null,
+    onAfterClose = null,
+  } = options;
+
+  const show = (data = null) => {
+    if (onBeforeShow && typeof onBeforeShow === 'function') {
+      onBeforeShow(data);
+    }
+
+    dialog.showModal();
+
+    if (onAfterShow && typeof onAfterShow === 'function') {
+      onAfterShow(data);
+    }
+  };
+
+  const hide = () => {
+    if (onBeforeClose && typeof onBeforeClose === 'function') {
+      onBeforeClose();
+    }
+
+    dialog.classList.add('overlay--closing');
+
+    const handleTransitionEnd = (transitionEvent) => {
+      if (transitionEvent.propertyName === 'opacity' && transitionEvent.target === dialog) {
+        dialog.removeEventListener('transitionend', handleTransitionEnd);
+        dialog.close();
+        dialog.classList.remove('overlay--closing');
+
+        if (onAfterClose && typeof onAfterClose === 'function') {
+          onAfterClose();
+        }
+      }
+    };
+    dialog.addEventListener('transitionend', handleTransitionEnd);
+  };
+
+  // Set up close button listener
+  const closeButton = dialog.querySelector('[data-js-overlay-close]');
+  if (closeButton) {
+    closeButton.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      hide();
+    });
+  }
+
+  // Set up backdrop click listener
+  dialog.addEventListener('click', (ev) => {
+    if (ev.target === dialog) {
+      hide();
+    }
+  });
+
+  // Set up escape key listener
+  dialog.addEventListener('cancel', (ev) => {
+    ev.preventDefault();
+    hide();
+  });
+
+  return { show, hide, dialog };
+};
+
 /* Main
 ============================================================================ */
 
 document.addEventListener('DOMContentLoaded', (event) => {
   const searchResults = getSearchResults(objectData.kind);
+
+  /* Initialize Metadata Manager
+  --------------------------------------------------------------------------  */
+  MetadataManager.init();
 
   /* Switchable Content
   --------------------------------------------------------------------------  */
@@ -674,6 +954,43 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
   }
 
+  /* Overlay
+  --------------------------------------------------------------------------  */
+  const triggerOverlayOpen = document.querySelectorAll('[data-js-overlay-open]');
+  triggerOverlayOpen.forEach((trigger) => {
+    const triggerConfig = trigger.dataset.jsOverlayOpen;
+    if (!triggerConfig) return;
+    const { target } = parseJson(triggerConfig);
+    if (!target) return;
+    const overlay = document.querySelector(`[data-js-overlay-target="${target}"]`);
+    
+    if (overlay) {
+      trigger.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        
+        // Special handling for download overlay
+        if (target === 'download' && trigger.dataset.jsImageDownload) {
+          const downloadData = JSON.parse(trigger.dataset.jsImageDownload);
+          if (downloadData && downloadData.length > 0 && window.downloadDialogManager) {
+            // Get preview image from the trigger's parent image element
+            const imageElement = trigger.closest('.image-stripe-list__item');
+            const previewImg = imageElement ? imageElement.querySelector('img') : null;
+            const imageData = {
+              downloadSizes: downloadData,
+              previewSrc: previewImg ? previewImg.src : null,
+              previewAlt: previewImg ? previewImg.alt : '',
+            };
+            window.downloadDialogManager.show(imageData);
+          }
+        } else {
+          // Generic overlay handling
+          const dialogManager = createDialogManager(overlay);
+          dialogManager.show();
+        }
+      });
+    }
+  });
+
   /* Go to Search Button
   --------------------------------------------------------------------------  */
   /*
@@ -725,9 +1042,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     if (target.closest('.js-edit-metadata')) {
-      const element = target.closest('.js-edit-metadata');
-      const { id } = element;
-      console.log('Clicked to edit metadata', element, id);
+      // Metadata editing logic would go here
     }
 
     if (target.closest('.js-expand-additional-content')) {
@@ -769,4 +1084,229 @@ document.addEventListener('DOMContentLoaded', (event) => {
       imageViewer.filterImageStripe(target);
     }
   }, false);
+
+  // Prefetch metadata on mouseover
+  document.addEventListener('mouseover', async (ev) => {
+    const { target } = ev;
+    const imageItem = target.closest('[data-js-change-image]');
+
+    if (imageItem && imageViewer) {
+      const cachedData = await imageViewer.prefetchMetadata(imageItem);
+      if (cachedData && cachedData.metadata && cachedData.metadata.isDownloadable !== undefined) {
+        updateDownloadButtonVisibility(imageItem, cachedData.metadata.isDownloadable);
+      }
+    }
+  }, false);
+
+  /* Download Overlay Functionality
+  ============================================================================ */
+  function initDownloadOverlay() {
+    const { translations } = globalData;
+    const { langCode } = globalData;
+    const overlay = document.querySelector('[data-js-overlay-target="download"]');
+    const downloadSizesList = document.querySelector('[data-js-download-sizes-list]');
+    const downloadPreview = document.querySelector('[data-js-download-preview]');
+
+    if (!overlay || !downloadSizesList || !downloadPreview) return;
+
+    // Create dialog manager with custom callbacks
+    const dialogManager = createDialogManager(overlay, {
+      onBeforeShow: (imageData) => {
+        // Handle both old and new data structures
+        const downloadData = imageData.downloadSizes || imageData;
+        // Generate download links (only show images where longest side <= 4400px)
+        const downloadLinks = downloadData.filter((sizeData) => {
+          const { width, height } = sizeData.dimensions || {};
+          if (!width || !height) return true;
+          return Math.max(width, height) <= 4400;
+        }).map((sizeData) => {
+          if (!translations[`size-${sizeData.size}`]) return '';
+          const sizeLabel = translations[`size-${sizeData.size}`][langCode];
+          const dimensions = ` (${sizeData.dimensions.width}×${sizeData.dimensions.height}px)`;
+          return `<li class="download-overlay__list-item"><a href="${sizeData.src}" target="_blank" rel="noopener noreferrer" `
+                 + `data-size="${sizeData.size}">${sizeLabel}${dimensions}</a></li>`;
+        }).join('');
+
+        downloadSizesList.innerHTML = downloadLinks;
+
+        // Update preview image if available
+        if (imageData.previewSrc && downloadPreview) {
+          const imgHTML = `<img src="${imageData.previewSrc}" alt="${imageData.previewAlt || ''}" />`;
+          downloadPreview.innerHTML = imgHTML;
+        }
+      },
+      onAfterClose: () => {
+        // Clear download links and preview when overlay is closed
+        downloadSizesList.innerHTML = '';
+        downloadPreview.innerHTML = '';
+      },
+    });
+
+    // Store the dialog manager globally so the overlay trigger can access it
+    window.downloadDialogManager = dialogManager;
+
+    // Handle download link clicks
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('.download-link')) {
+        // Close overlay after download starts
+        setTimeout(() => dialogManager.hide(), 500);
+      }
+    });
+  }
+
+  // Initialize download overlay
+  initDownloadOverlay();
+
+  /* Metadata Form Clipboard Actions
+  ============================================================================ */
+  // Helper function to show messages
+  const showMessage = (text, type = 'info') => {
+    const message = document.querySelector('.meta-data-form .message');
+    if (!message) return;
+
+    // Remove previous type classes and animation class
+    message.classList.remove('info', 'success', 'error', 'animate-in');
+
+    // Add new type and trigger animation
+    message.classList.add(type, 'animate-in');
+    message.textContent = text;
+
+    // Remove animate-in class after animation ends
+    const handleAnimationEnd = () => {
+      message.classList.remove('animate-in');
+      message.removeEventListener('animationend', handleAnimationEnd);
+    };
+
+    message.addEventListener('animationend', handleAnimationEnd);
+  };
+
+  // Helper function to collect form data
+  const collectMetadataFromForm = () => {
+    const fieldMappings = window.metadataFieldMappings || [];
+    const metadataObject = {};
+
+    fieldMappings.forEach(({
+      formId, metadataKey, lang, type,
+    }) => {
+      const inputField = document.querySelector(`[data-id="${formId}"]`);
+      if (!inputField) return;
+
+      let value;
+      if (type === 'checkbox') {
+        value = inputField.checked;
+      } else {
+        value = inputField.value;
+      }
+
+      // Build the metadata object structure
+      if (lang) {
+        if (!metadataObject[metadataKey]) {
+          metadataObject[metadataKey] = {};
+        }
+        metadataObject[metadataKey][lang] = value;
+      } else {
+        metadataObject[metadataKey] = value;
+      }
+    });
+
+    return metadataObject;
+  };
+
+  const copyMetadataButton = document.getElementById('copyButton');
+  const pasteMetadataButton = document.getElementById('pasteButton');
+  const saveMetadataButton = document.getElementById('saveButton');
+
+  if (copyMetadataButton) {
+    copyMetadataButton.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      const metadataObject = collectMetadataFromForm();
+
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(metadataObject, null, 2));
+        showMessage('Metadaten in die Zwischenablage kopiert', 'success');
+      } catch (err) {
+        showMessage('Failed to copy metadata', 'error');
+      }
+    });
+  }
+
+  if (pasteMetadataButton) {
+    pasteMetadataButton.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      try {
+        const clipboardText = await navigator.clipboard.readText();
+        const metadata = JSON.parse(clipboardText);
+
+        // Use the existing populateMetadataForm function
+        populateMetadataForm(metadata);
+
+        showMessage('Metadaten aus der Zwischenablage eingefügt', 'success');
+      } catch (err) {
+        showMessage('Failed to paste metadata. Make sure clipboard contains valid JSON.', 'error');
+      }
+    });
+  }
+
+  if (saveMetadataButton) {
+    saveMetadataButton.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      const metadataObject = collectMetadataFromForm();
+
+      // Check if we have the required API parameters from the last fetch
+      if (!globalData.currentMetadataParams) {
+        showMessage('Keine Bild-Informationen verfügbar. Bitte wählen Sie zuerst ein Bild aus.', 'error');
+        return;
+      }
+
+      const {
+        type,
+        artefactId,
+        imageType,
+        resourceId,
+        lang,
+        subImageType,
+      } = globalData.currentMetadataParams;
+
+      // Build URL with query parameters (same as fetch)
+      const baseUrl = objectData.metadataExifApiEndpoint;
+      const typeParam = `type=${encodeURIComponent(type)}`;
+      const artefactParam = `artefactId=${encodeURIComponent(artefactId)}`;
+      const imageTypeParam = `imageType=${encodeURIComponent(imageType)}`;
+      const resourceParam = `resourceId=${encodeURIComponent(resourceId)}`;
+      const langParam = `lang=${encodeURIComponent(lang)}`;
+
+      let url = `${baseUrl}?${typeParam}&${artefactParam}&${imageTypeParam}&${resourceParam}&${langParam}`;
+
+      if (subImageType) {
+        url += `&subImageType=${encodeURIComponent(subImageType)}`;
+      }
+      
+      try {
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-KEY': globalData.metadataApiKey,
+          },
+          body: JSON.stringify(metadataObject),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        showMessage('Metadaten erfolgreich gespeichert', 'success');
+        
+        // Update caption display with new metadata
+        if (imageViewer && globalData.currentImage) {
+          imageViewer.setCaption(globalData.currentImage, metadataObject);
+        }
+      } catch (err) {
+        showMessage('Fehler beim Speichern der Metadaten', 'error');
+      }
+    });
+  }
 });

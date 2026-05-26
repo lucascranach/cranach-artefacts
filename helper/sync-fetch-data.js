@@ -7,7 +7,8 @@ const dataTypes = {
   'graphics-virtual': 'cda-graphics-v2.virtual',
   'literature': 'cda-literaturereferences-v2',
   'paintings': 'cda-paintings-v2',
-  'thesaurus': 'cda-thesaurus-v2'
+  'thesaurus': 'cda-thesaurus-v2',
+  'drawings': 'cda-drawings-v2',
 };
 
 const checkCacheFolder = (cacheFolder) => {
@@ -18,7 +19,7 @@ const checkCacheFolder = (cacheFolder) => {
   } catch (err) {
     console.error(err);
   }
-}
+};
 
 const getCacheFileName = (cacheFolder, params) => {
   const { lang, type } = params;
@@ -27,16 +28,16 @@ const getCacheFileName = (cacheFolder, params) => {
     ? `${cacheFolder}/${dataTypes[type]}.json`
     : `${cacheFolder}/${dataTypes[type]}.${lang}.json`;
   return cacheFileName;
-}
+};
 
-module.exports = fetchData = function (params) {
+const fetchData = function fetchData(params) {
   const apiUrl = process.env.API_ENDPOINT;
   const cacheFolder = process.env.CACHE_FOLDER;
   const { lang } = params;
   const { type } = params;
-  
+
   checkCacheFolder(cacheFolder);
-  const cacheFile = getCacheFileName(cacheFolder, params); 
+  const cacheFile = getCacheFileName(cacheFolder, params);
 
   if (fs.existsSync(cacheFile)) {
     const file = fs.readFileSync(cacheFile, 'utf8');
@@ -44,18 +45,17 @@ module.exports = fetchData = function (params) {
   }
 
   const url = `${apiUrl}?lang=${lang}&type=${type}`;
-  console.log("Fetching data from: " + url)
 
   const data = fetch(url, {
     headers: {
-      "x-api-key": process.env.API_KEY,
-      "Content-Type": "application/json"
-    }
+      'x-api-key': process.env.API_KEY,
+      'Content-Type': 'application/json',
+    },
   }).json();
 
   fs.writeFileSync(cacheFile, JSON.stringify(data));
 
   return data;
-
 };
 
+module.exports = fetchData;

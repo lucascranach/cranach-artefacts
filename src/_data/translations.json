@@ -91,25 +91,25 @@
     "de": "Signatur / Datierung",
     "en": "Signature / Dating"
   },
-  "inscriptions": {
+  "inscriptionsInnerHeadline": {
     "de": "Inschriften",
     "en": "Inscriptions"
   },
-  "inscriptionsInnerHeadline": {
-    "de": "Inschriften, Wappen",
-    "en": "Inscriptions, Badges"
-  },
   "inscriptionsOuterHeadline": {
-    "de": "Inschriften und Beschriftungen",
-    "en": "Inscriptions and Labels"
+    "de": "Inschriften",
+    "en": "Inscriptions"
   },
   "stamps": {
     "de": "Stempel, Siegel, Beschriftungen",
     "en": "Stamps, Seals, Labels"
   },
   "labelsInnerHeadline": {
-    "de": "Stempel, Siegel, Beschriftungen",
-    "en": "Stamps, Seals, Labels"
+    "de": "spätere Beschriftungen, Stempel, Siegel",
+    "en": "later inscription, stamps, seals, labels"
+  },
+  "labelsOuterHeadline": {
+    "de": "Beschriftungen",
+    "en": "Labels"
   },
   "shortDescription": {
     "de": "Kurzbeschreibung",
@@ -167,13 +167,33 @@
     "de": "Zuschreibungen",
     "en": "Attributions"
   },
+  "printer": {
+    "de": "Drucker",
+    "en": "Printer"
+  },
+  "printers": {
+    "de": "Drucker",
+    "en": "Printers"
+  },
+  "publisher": {
+    "de": "Verleger",
+    "en": "Publisher"
+  },
+  "publishers": {
+    "de": "Verleger",
+    "en": "Publisher"
+  },
+  "officins": {
+    "de": "Officin",
+    "en": "Officina"
+  },
   "productionDate": {
     "de": "Datierung",
-    "en": "Production date"
+    "en": "Dating"
   },
-  "productionDates": {
-    "de": "Datierungen",
-    "en": "Production dates"
+  "usageDate": {
+    "de": "Verwendung",
+    "en": "Chronology"
   },
   "permalink": {
     "de": "Permalink",
@@ -232,8 +252,12 @@
     "en": "Volume"
   },
   "edition": {
-    "de": "Ausgabe",
+    "de": "Auflage",
     "en": "Edition"
+  },
+  "nochOffen":{
+    "de": "noch offen",
+    "en": "uncertain"
   },
   "publishEdition": {
     "de": "Jahrgang",
@@ -439,7 +463,7 @@
     "de": "Zugehörige Werke",
     "en": "Connected Works"
   },
-  "overallViewOfThePiece":{
+  "overallViewOfThePiece": {
     "de": "Gesamtansicht des Werkes",
     "en": "Overall view of the piece"
   },
@@ -515,9 +539,17 @@
     "de": "Bartsch-Nr.",
     "en": "Bartsch-No"
   },
+  "gnd": {
+    "de": "GND-Nr.",
+    "en": "GND-No"
+  },
   "impressions": {
     "de": "Abzüge",
     "en": "Impressions"
+  },
+  "0-state": {
+    "de": "Unbekannter Zustand",
+    "en": "Unknown State"
   },
   "1-state": {
     "de": "1. Zustand",
@@ -559,10 +591,14 @@
     "de": "10. Zustand",
     "en": "10th State"
   },
+  "100-state": {
+    "de": "Einziger Zustand",
+    "en": "Only State"
+  },
   "zur-suche": {
     "de": "zur Suche",
     "en": "go to search"
-  }, 
+  },
   "zur-werksuche": {
     "de": "zur Werksuche",
     "en": "go to works search"
@@ -615,21 +651,36 @@
     "de": "Literatur anzeigen",
     "en": "Show Literature"
   },
-  "worksDiscussedInPublication":{
+  "worksDiscussedInPublication": {
     "de": "In der Publikation besprochene Werke",
     "en": "Works discussed in publication"
   },
-  "IDENTICAL_WATERMARK":
-  {
+  "IDENTICAL_WATERMARK": {
     "de": "Identisches Wasserzeichen",
     "en": "Identical watermark"
   },
-  "ON_SAME_SHEET":{
+  "ON_SAME_SHEET": {
     "de": "Auf dem selben Blatt",
     "en": "On the same sheet"
   },
-  "PART_OF_SERIES":{
+  "PART_OF_SERIES": {
     "de": "Teil einer Serie",
     "en": "Part of series"
+  },
+  "downloadIllustration": {
+    "de": "Abbildung herunterladen",
+    "en": "Download illustration"
+  },
+  "license": {
+    "de": "Lizenz:",
+    "en": "License:"
+  },
+  "licenseText": {
+    "de": "Creative Commons Namensnennung 4.0 International",
+    "en": "Creative Commons Attribution 4.0 International"
+  },
+  "SHOW_ALL": {
+    "de": "Alle anzeigen",
+    "en": "Show all"
   }
 }

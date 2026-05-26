@@ -1,8 +1,8 @@
-name: Build and deploy to cda Server (intern)
+name: Build and deploy to cda Server (preview)
 
 on:
   push:
-    branches: ['intern']
+    branches: ['preview/2026']
   workflow_dispatch:
     inputs:
       environment:
@@ -30,9 +30,10 @@ jobs:
         run: npm ci
 
       - name: Run npm build
-        run: npm run intern
+        run: npm run preview
         env:
           API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
+          API_KEY: ${{ secrets.API_KEY }}
           API_METADATA_EXIF_ENDPOINT: ${{ secrets.API_METADATA_EXIF_ENDPOINT }}
           CACHE_FOLDER: ${{ secrets.CACHE_FOLDER }}
           METADATA_API_KEY: ${{ secrets.METADATA_API_KEY }}
@@ -48,4 +49,4 @@ jobs:
         run: ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy with rsync
-        run: rsync -avz ./docs/ -e 'ssh -p ${{ secrets.SSH_PORT }}' ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/intern/artefacts-autodeploy/
+        run: rsync -avz ./docs/ -e 'ssh -p ${{ secrets.SSH_PORT }}' ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/intern/artefacts-preview-2026-autodeploy/

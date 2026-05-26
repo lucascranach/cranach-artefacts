@@ -2,7 +2,11 @@ exports.getDocumentStripe = (eleventy, { content }, langCode, config, hasSeperat
   if (!content.documents) return null;
   const { documents } = content;
   const { contentTypes } = config;
-  const documentsPath = `${config.documentsBasePath}/${content.inventoryNumber}_${content.objectName}`;
+  const prefix = content.inventoryNumberPrefix;
+
+  const documentsPath = content.objectName
+    ? `${config.documentsBasePath}/${prefix}${content.inventoryNumber}_${content.objectName}`
+    : `${config.documentsBasePath}/${prefix}${content.inventoryNumber}`;
 
   const documentStripe = Object.keys(contentTypes).map((typeData) => {
     const key = typeData;

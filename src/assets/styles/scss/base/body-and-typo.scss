@@ -21,13 +21,15 @@ a {
   text-decoration: none;
 
   &.link{
+    display: inline-block;
     border-bottom: solid $border-stroke-weight-s $accent;
     transition: all $tr-fast;
 
     &:hover{
-      display: inline-block;
       padding-right: $quad;
       padding-left: $quad;
+      margin-right: (- $quad);
+      margin-left: (- $quad);
       background-color: $accent;
     }
   }
@@ -36,7 +38,7 @@ a {
 a[target=_blank] {
   display: inline-block;
   border-bottom: dotted $border-stroke-weight-s $accent;
-  transition: background $tr-fast, padding $tr-fast;
+  transition: background $tr-fast, padding $tr-fast, margin $tr-fast;
 
   &::after {
     @include external-link;
@@ -45,6 +47,8 @@ a[target=_blank] {
   &:hover {
     padding-right: $quad;
     padding-left: $quad;
+    margin-right: (- $quad);
+    margin-left: (- $quad);
     background-color: $accent;
   }
 }

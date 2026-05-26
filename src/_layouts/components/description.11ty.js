@@ -1,9 +1,3 @@
-const convertStatesToHeadline = (text) => {
-  const regex = new RegExp(`\n(.)\. Zustand|\n(.)\. State|\n(.)th State`, 'ig');
-  return text.replace(regex, `<h2>$&</h2>`);
-};
-
-
 exports.getCopyText = (eleventy, { content }) => {
   const numberOfWords = 50;
   const fullText = content.description;
@@ -11,8 +5,8 @@ exports.getCopyText = (eleventy, { content }) => {
   const preview = words.slice(0, numberOfWords).join(' ');
   const text = words.length > numberOfWords ? `
     <div id="switchableCopyText" data-js-switchable-content='["previewText","fullText"]'>
-      <div id="previewText" class="preview-text">${eleventy.getFormatedText(preview, "no-lists")}</div>
-      <div class="is-cut full-text" id="fullText">${eleventy.getFormatedText(convertStatesToHeadline(fullText), "no-lists")}</div>
+      <div id="previewText" class="preview-text">${eleventy.getFormatedText(preview, "no-lists", "no-heading")}</div>
+      <div class="is-cut full-text" id="fullText">${eleventy.getFormatedText(fullText, "no-lists", "no-heading")}</div>
     </div>
     ` : `
       ${eleventy.getFormatedText(fullText)}

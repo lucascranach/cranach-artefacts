@@ -107,5 +107,17 @@
   "imageInformation":{
     "de": "Bildinformationen",
     "en": "Image Information"
+  },
+  "size-medium": {
+    "de": "Mittel",
+    "en": "Medium"
+  },
+  "size-large": {
+    "de": "Groß",
+    "en": "Large"
+  },
+  "size-origin": {
+    "de": "Originalgröße",
+    "en": "Original Size"
   }
 }

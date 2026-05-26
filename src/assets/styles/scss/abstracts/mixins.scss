@@ -69,20 +69,6 @@
   vertical-align: bottom;
 }
 
-@mixin compare-collection() {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: inline-block;
-  padding: $xxs $xs;
-  background-color: $darken-strong;
-  border-radius: $radius-s;
-  color: $accent;
-  font-family: $font-icons;
-  font-size: $l;
-  vertical-align: bottom;
-}
-
 @mixin compare-launcher() {
   display: block;
   padding-right: $xs;
@@ -92,3 +78,16 @@
   font-size: $l;
 }
 
+
+@mixin interaction-button-base() {
+  display: inline-block;
+  padding: $xxs $xs;
+  border: none;
+  background-color: $accent;
+  border-radius: $radius-s;
+  color: $darkest;
+  cursor: pointer;
+  font-family: $font-icons;
+  font-size: $l;
+  vertical-align: bottom
+}

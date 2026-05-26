@@ -32,7 +32,6 @@ jobs:
       - name: Run npm build
         run: npm run build
         env:
-          API_KEY: ${{ secrets.API_KEY }}
           API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
           CACHE_FOLDER: ${{ secrets.CACHE_FOLDER }}
       
