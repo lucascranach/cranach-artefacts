@@ -126,7 +126,7 @@ exports.render = function (pageData) {
       <script>
         const objectData = {};
         objectData.metadataExifApiEndpoint = "${process.env.API_METADATA_EXIF_ENDPOINT}";
-        objectData.metadataApiKey = "${shouldIncludeMetadataEditor ? process.env.METADATA_API_KEY : ''}";
+        objectData.metadataApiKey = "${process.env.API_KEY}";
         objectData.langCode = "${langCode}";
         objectData.imageStack = ${imageStack};
         objectData.baseUrl = "${baseUrl}/${langCode}";

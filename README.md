@@ -8,7 +8,7 @@ Bislang ist nur ein [automatisches Deployment für den internen Bereich](https:/
 ```env
 CACHE_FOLDER=.cache
 API_ENDPOINT=https://lucascranach.org/data-proxy/json-data.php
-METADATA_API_KEY=****************
+API_KEY=****************
 API_METADATA_EXIF_ENDPOINT=https://lucascranach.org/data-proxy/metadata-exif.php
 ```
 
