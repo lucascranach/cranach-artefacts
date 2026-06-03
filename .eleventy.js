@@ -22,6 +22,7 @@ const config = {
   "generateArchivals": true,
   "generateDrawings": true,
   "generateGraphicsVirtualObjects": true,
+  "filterRealGraphicsByIsPublished": true,
   "pathPrefix": {
     "external": "artefacts",
     "internal": "intern/artefacts",
@@ -369,7 +370,14 @@ const getGraphicsRealObjectsCollection = (lang) => {
     return 0;
   });
 
-  return sortedGraphicsRealObjects;
+  if (
+    !config.filterRealGraphicsByIsPublished
+    || process.env.ELEVENTY_ENV === 'internal'
+    || process.env.ELEVENTY_ENV === 'preview'
+    || process.env.ELEVENTY_ENV === 'development'
+  ) return sortedGraphicsRealObjects;
+
+  return sortedGraphicsRealObjects.filter(item => item.metadata.isPublished === true);
 }
 
 const getGraphicsVirtualObjectsCollection = (lang) => {
