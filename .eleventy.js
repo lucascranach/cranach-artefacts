@@ -22,7 +22,7 @@ const config = {
   "generateArchivals": true,
   "generateDrawings": true,
   "generateGraphicsVirtualObjects": true,
-  "filterRealGraphicsByIsPublished": true,
+  "onlyShowPublishedArtefacts": true,
   "pathPrefix": {
     "external": "artefacts",
     "internal": "intern/artefacts",
@@ -160,7 +160,6 @@ const referenceTypes = {
   "IDENTICAL_WATERMARK": "identicalWatermark"
 };
 
-
 const paintingsData = {
   "de": fetchData({"lang":"de", "type":"paintings"}),
   "en": fetchData({"lang":"en", "type":"paintings"}),
@@ -212,10 +211,12 @@ const simpleMarkdownItRenderer = new markdownIt('commonmark', {
 
 const pathPrefix = config.pathPrefix[process.env.ELEVENTY_ENV];
 
-const showUnpublishedArtefacts = 
-  process.env.ELEVENTY_ENV === 'internal'
-  || process.env.ELEVENTY_ENV === 'preview'
-  || process.env.ELEVENTY_ENV === 'development';
+const isPublishedArtefact = (item) => {
+  const isPublished = item?.metadata?.isPublished;
+  return isPublished === true || isPublished === 'true' || isPublished === 1 || isPublished === '1';
+};
+
+const onlyShowPublishedArtefacts = config.onlyShowPublishedArtefacts === true;
 
 const markRemarks = str => {
   const mark = (match, str) => {
@@ -253,7 +254,7 @@ const getDrawingsCollection = (lang) => {
     return 0;
   });
 
-  if (showUnpublishedArtefacts) return sortedDrawings;
+  if (!onlyShowPublishedArtefacts) return sortedDrawings;
 
   const publishedDrawings = sortedDrawings.filter(item => item.metadata.isPublished === true);
   return publishedDrawings;
@@ -273,7 +274,7 @@ const getPaintingsCollection = (lang) => {
     return 0;
   });
 
-  if (showUnpublishedArtefacts) return sortedPaintings;
+  if (!onlyShowPublishedArtefacts) return sortedPaintings;
 
   const publishedPaintings = sortedPaintings.filter(item => !item.sortingNumber.match(/^20/) && item.metadata.isPublished === true);
   return publishedPaintings;
@@ -293,7 +294,7 @@ const getLiteratureCollection = (lang) => {
     return 0;
   });
 
-  if (showUnpublishedArtefacts) return sortedLiterature;
+  if (!onlyShowPublishedArtefacts) return sortedLiterature;
 
   return sortedLiterature;
 }
@@ -340,7 +341,7 @@ const getAuthorCollection = (lang) => {
     return 0;
   });
   
-  if (showUnpublishedArtefacts) return sortedAuthors;
+  if (!onlyShowPublishedArtefacts) return sortedAuthors;
 
   return sortedAuthors;
 }
@@ -370,19 +371,14 @@ const getGraphicsRealObjectsCollection = (lang) => {
     return 0;
   });
 
-  if (
-    !config.filterRealGraphicsByIsPublished
-    || process.env.ELEVENTY_ENV === 'internal'
-    || process.env.ELEVENTY_ENV === 'preview'
-    || process.env.ELEVENTY_ENV === 'development'
-  ) return sortedGraphicsRealObjects;
+  if (!onlyShowPublishedArtefacts) return sortedGraphicsRealObjects;
 
-  return sortedGraphicsRealObjects.filter(item => item.metadata.isPublished === true);
+  return sortedGraphicsRealObjects.filter(item => isPublishedArtefact(item));
 }
 
 const getGraphicsVirtualObjectsCollection = (lang) => {
   const graphicsVirtualObjectsForLang = graphicsVirtualObjectData[lang];
-  const devObjects = ["LC_HVI-81_105", "LC_HVI-75_96-57","LC_HVI-5_4","LC_HVI-12_3","LC_HVI-19-21_10","LC_HVI-22_24","LC_HVI-24_26","LC_HVI-29_30e", "LC_HVI-56_79"]; // , "ANO_H-NONE-022", "LC_HVI-9_8", "LC_HVI-19-21_18","MIB_H-NONE-001", "MIB_H-NONE-002",  "LC_HVI-57_80", "LC_HVI-19-21_16", "LC_HVI-68_92", "LC_HVI-56_79"
+  const devObjects = ["LC_HVI-56_79"];
   
   const graphicsVirtualObjects = config.onlyDevObjects === true 
     ? graphicsVirtualObjectsForLang.items.filter(item => devObjects.includes(item.inventoryNumber))
@@ -393,11 +389,7 @@ const getGraphicsVirtualObjectsCollection = (lang) => {
     return 0;
   });
 
-  if (
-    process.env.ELEVENTY_ENV === 'internal'
-    || process.env.ELEVENTY_ENV === 'preview'
-    || process.env.ELEVENTY_ENV === 'development'
-  ) return sortedGraphicsVirtualObjects;
+  if (!onlyShowPublishedArtefacts) return sortedGraphicsVirtualObjects;
 
   return sortedGraphicsVirtualObjects.filter(item => item.metadata.imgSrc.match(/[a-z]/) && item.metadata.isPublished === true);
 }
@@ -586,6 +578,10 @@ module.exports = function (eleventyConfig) {
     if (reprintRefItemData.length === 0) return;
     
     const reprintRefItem = reprintRefItemData.shift();
+
+
+    if (onlyShowPublishedArtefacts && !isPublishedArtefact(reprintRefItem)) return;
+
     return {
       'id': reprintRefItem.metadata.id,
       'title': reprintRefItem.metadata.title,
@@ -603,7 +599,10 @@ module.exports = function (eleventyConfig) {
     const reprintRefItemData = graphicsRealObjectData[lang].items.filter(item => item.metadata.id === ref);
     if (reprintRefItemData.length === 0) return;
 
-    return reprintRefItemData.shift();
+    const reprintRefItem = reprintRefItemData.shift();
+    if (onlyShowPublishedArtefacts && !isPublishedArtefact(reprintRefItem)) return;
+
+    return reprintRefItem;
 
   });
 
