@@ -14,6 +14,10 @@ const getimageBaseUrl = () => JSON.stringify(config.imageTiles);
 const getClientTranslations = () => JSON.stringify(this.getClientTranslations());
 const getLangCode = ({ content }) => content.metadata.langCode;
 const getDocumentTitle = ({ content }) => content.metadata.title;
+const isPublishedReprint = (item) => {
+  const isPublished = item?.metadata?.isPublished;
+  return isPublished === true || isPublished === 'true' || isPublished === 1 || isPublished === '1';
+};
 
 const editionMap = {
   '': 'a)',
@@ -72,9 +76,13 @@ const editionMap = {
   '125': 'z?)'
 };
 
-const generateReprint = (eleventy, id, masterData, collections, virtualTitle) => {
+const generateReprint = (eleventy, id, masterData, collections, virtualTitle, reprintData = false) => {
+  const content = reprintData || eleventy.getReprintData(id, langCode);
+  if (!content) return;
+  if (config.onlyShowPublishedArtefacts && !isPublishedReprint(content)) return;
+
   const data = {
-    content: eleventy.getReprintData(id, langCode),
+    content,
   };
   const path = `${config.dist}/${langCode}/${id}`;
   const filename = 'index.html';
@@ -100,6 +108,7 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
 
   const reprintsListData = [...content.references.reprints];
   const reprintsListRefData = reprintsListData.map((item) => eleventy.getReprintRefItem(item.inventoryNumber, langCode));
+
   const checkConditionLevel = (item) => {
     if (!item) return false;
     if (item.conditionLevel === conditionLevel) return true;
@@ -133,7 +142,11 @@ const getReprints = (eleventy, data, conditionLevel, secondConditionLevel = fals
     const reprintsList = reprints.filter((reprint) => reprint.editionNumber === editionNumber);
     const reprintsListHtml = reprintsList.map(
       (item) => {
-        generateReprint(eleventy, item.id, masterData, collections, content.metadata.title);
+        const reprintData = eleventy.getReprintData(item.id, langCode);
+        if (!reprintData) return '';
+        if (config.onlyShowPublishedArtefacts && !isPublishedReprint(reprintData)) return '';
+
+        generateReprint(eleventy, item.id, masterData, collections, content.metadata.title, reprintData);
         const url = `${baseUrl}/${langCode}/${item.id}/`;
         const title = eleventy.altText(item.title);
         const editionId = item.editionNumber ? resolveEditionLabel(item.editionNumber) : '';
@@ -193,7 +206,6 @@ exports.render = function (pageData) {
   data.content.entityType = data.entityType;
   data.content.url = `${this.getBaseUrl()}${data.page.url}`;
   data.content.masterData = getMasterData(data, langCode);
-  this.log(data);
 
   const { id } = data.content.metadata;
   const { masterData } = data.content;
