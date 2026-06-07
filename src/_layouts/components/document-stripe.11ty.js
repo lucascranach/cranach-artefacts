@@ -5,8 +5,8 @@ exports.getDocumentStripe = (eleventy, { content }, langCode, config, hasSeperat
   const prefix = content.inventoryNumberPrefix;
 
   const documentsPath = content.objectName
-    ? `${config.documentsBasePath}/${prefix}${content.inventoryNumber}_${content.objectName}`
-    : `${config.documentsBasePath}/${prefix}${content.inventoryNumber}`;
+    ? `${config.documentsBasePath}/${content.inventoryNumber}_${content.objectName}`
+    : `${config.documentsBasePath}/${content.inventoryNumber}`;
 
   const documentStripe = Object.keys(contentTypes).map((typeData) => {
     const key = typeData;
@@ -15,12 +15,13 @@ exports.getDocumentStripe = (eleventy, { content }, langCode, config, hasSeperat
     const { sort } = contentTypes[typeData];
     const { fragment } = contentTypes[typeData];
     const html = items.map((item) => {
-      const url = `${documentsPath}/${sort}_${fragment}/${item.id}.pdf`;
+      const fileName = item.id.replace(prefix, '');
+      const url = `${documentsPath}/${sort}_${fragment}/${fileName}.pdf`;
       eleventy.checkRessource(url);
       return `
       <li>
         <a href="${url}" class="has-interaction is-download-link">
-          <span data-filetype="pdf"></span>${item.id}.pdf</a>
+          <span data-filetype="pdf"></span>${fileName}.pdf</a>
       </li>
       `;
     });
