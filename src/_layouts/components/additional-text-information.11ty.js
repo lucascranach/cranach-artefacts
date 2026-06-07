@@ -6,7 +6,7 @@ exports.getAdditionalTextInformation = (eleventy, { content }, langCode) => {
   // eslint-disable-next-line max-len
   const uniqueAdditionalInfoTypes = additionalInfoTypes.filter((item, index) => additionalInfoTypes.indexOf(item) === index);
   const getTypeContent = (type) => {
-    const typeContent = additionalInfos.filter((item) => item.type === type);    
+    const typeContent = additionalInfos.filter((item) => item.type === type);
     return typeContent.length === 0 ? '' : typeContent.map((item) => {
       const formatedText = eleventy.getFormatedText(item.text);
       return `
@@ -29,7 +29,7 @@ exports.getAdditionalTextInformation = (eleventy, { content }, langCode) => {
             data-js-expanded="false" 
             data-js-expandable="${elementId}">${typeHeadline}</h2>
         <div class="expandable-content" id="${elementId}">
-          ${getTypeContent(type).join('')}
+         ${getTypeContent(type).join('')}
         </div>
       </div>
     `;

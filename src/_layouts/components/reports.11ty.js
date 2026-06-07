@@ -1,7 +1,8 @@
 exports.getReports = (eleventy, { content }, langCode, config, type) => {
   const { contentTypes } = config;
-  const documentsPath = `${config.documentsBasePath}/${content.inventoryNumber}_${content.objectName}`;
+  const documentsPath = `${config.documentsBasePath}/${content.inventoryNumber}`;
   const reports = content.restorationSurveys.filter((rs) => rs.type === type);
+  const prefix = content.inventoryNumberPrefix;
 
   const getReportImage = (itemId, itemType) => {
     if (!content.images || !content.images[itemType]) return false;
@@ -45,12 +46,13 @@ exports.getReports = (eleventy, { content }, langCode, config, type) => {
     const documentStripeItems = otherItems.map((item) => {
       const typeData = contentTypes[item.type];
       if (!typeData) return '';
-      const url = `${documentsPath}/${typeData.sort}_${typeData.fragment}/${item.id}.pdf`;
+      const fileName = item.id.replace(prefix, '');
+      const url = `${documentsPath}/${typeData.sort}_${typeData.fragment}/${fileName}.pdf`;
       eleventy.checkRessource(url);
       return `
       <li>
         <a href="${url}" class="has-interaction is-download-link">
-          <span data-filetype="pdf"></span>${item.id}.pdf</a>
+          <span data-filetype="pdf"></span>${fileName}.pdf</a>
       </li>
       `;
     });
