@@ -115,8 +115,8 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
       <link href="${eleventy.url('/assets/images/favicon.svg')}" rel="icon" type="image/svg">
       <script>
         const objectData = {};
-        objectData.g = "${process.env.API_METADATA_EXIF_ENDPOINT}";
-        objectData.metadataApiKey = "${process.env.API_KEY}";
+        objectData.metadataExifApiEndpoint = "${process.env.API_METADATA_EXIF_ENDPOINT}";
+        objectData.metadataApiKey = "${shouldIncludeMetadataEditor ? process.env.METADATA_API_KEY : ''}";
         objectData.langCode = "${langCode}";
         objectData.imageStack = ${imageStack};
         objectData.baseUrl = "${baseUrl}/${langCode}";
