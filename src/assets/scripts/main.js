@@ -1109,21 +1109,48 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     if (!overlay || !downloadSizesList || !downloadPreview) return;
 
+    // Longest edge (px) the full-resolution download is capped to. This is a
+    // DISPLAY value only, used to show the dimensions the client will actually
+    // receive; the capping itself is enforced server-side. Keep it in sync with
+    // $config['maxSize'] in the data-proxy image-download.php endpoint.
+    const MAX_DOWNLOAD_SIZE = 4400;
+
     // Create dialog manager with custom callbacks
     const dialogManager = createDialogManager(overlay, {
       onBeforeShow: (imageData) => {
         // Handle both old and new data structures
         const downloadData = imageData.downloadSizes || imageData;
-        // Generate download links (only show images where longest side <= 4400px)
-        const downloadLinks = downloadData.filter((sizeData) => {
-          const { width, height } = sizeData.dimensions || {};
-          if (!width || !height) return true;
-          return Math.max(width, height) <= 4400;
-        }).map((sizeData) => {
+        // Generate download links. The fixed-size web derivatives are linked
+        // directly. The full-resolution download ("origin") always goes through
+        // the backend, which decides on its own whether to deliver the original
+        // or a downscaled version — the maximum edge length is enforced there.
+        const downloadLinks = downloadData.map((sizeData) => {
           if (!translations[`size-${sizeData.size}`]) return '';
           const sizeLabel = translations[`size-${sizeData.size}`][langCode];
-          const dimensions = ` (${sizeData.dimensions.width}×${sizeData.dimensions.height}px)`;
-          return `<li class="download-overlay__list-item"><a href="${sizeData.src}" target="_blank" rel="noopener noreferrer" `
+          const { width, height } = sizeData.dimensions || {};
+
+          if (sizeData.size === 'origin') {
+            const filename = sizeData.src.split('/').pop();
+            // Show the dimensions the client will actually receive: the backend
+            // caps the longest edge at MAX_DOWNLOAD_SIZE (aspect ratio kept).
+            let dimensions = '';
+            if (width && height) {
+              const longest = Math.max(width, height);
+              const scale = longest > MAX_DOWNLOAD_SIZE ? MAX_DOWNLOAD_SIZE / longest : 1;
+              const scaledWidth = Math.round(width * scale);
+              const scaledHeight = Math.round(height * scale);
+              dimensions = ` (${scaledWidth}×${scaledHeight}px)`;
+            }
+            // target="_blank" lets it inherit the shared external-link look; the
+            // actual click is handled in JS (preventDefault -> fetch download).
+            return '<li class="download-overlay__list-item">'
+                   + '<a href="#" class="download-link download-link--resized" target="_blank" rel="noopener noreferrer" '
+                   + `data-download-src="${sizeData.src}" data-download-filename="${filename}" `
+                   + `data-size="${sizeData.size}">${sizeLabel}${dimensions}</a></li>`;
+          }
+
+          const dimensions = (width && height) ? ` (${width}×${height}px)` : '';
+          return `<li class="download-overlay__list-item"><a href="${sizeData.src}" class="download-link" target="_blank" rel="noopener noreferrer" `
                  + `data-size="${sizeData.size}">${sizeLabel}${dimensions}</a></li>`;
         }).join('');
 
@@ -1145,10 +1172,56 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // Store the dialog manager globally so the overlay trigger can access it
     window.downloadDialogManager = dialogManager;
 
+    // Trigger a browser download for an in-memory blob, like a static file.
+    const triggerBlobDownload = (blob, filename) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename || 'download.jpg';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    };
+
+    // Fetch the runtime-downscaled image from the backend and start the download.
+    const downloadResizedImage = async (linkEl) => {
+      const { downloadSrc, downloadFilename } = linkEl.dataset;
+      const endpoint = objectData.imageDownloadApiEndpoint;
+      if (!downloadSrc || !endpoint) return;
+
+      linkEl.classList.add('is-loading');
+      linkEl.setAttribute('aria-busy', 'true');
+
+      try {
+        const url = `${endpoint}?src=${encodeURIComponent(downloadSrc)}`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Download failed: ${response.status}`);
+        const blob = await response.blob();
+        triggerBlobDownload(blob, downloadFilename);
+        setTimeout(() => dialogManager.hide(), 500);
+      } catch (error) {
+        // Surface a lightweight notification; keep the overlay open on failure.
+        // eslint-disable-next-line no-new
+        new Notification(translations.downloadError
+          ? translations.downloadError[langCode]
+          : 'Download failed.');
+      } finally {
+        linkEl.classList.remove('is-loading');
+        linkEl.removeAttribute('aria-busy');
+      }
+    };
+
     // Handle download link clicks
     document.addEventListener('click', (e) => {
+      const resizedLink = e.target.closest('.download-link--resized');
+      if (resizedLink) {
+        e.preventDefault();
+        downloadResizedImage(resizedLink);
+        return;
+      }
       if (e.target.matches('.download-link')) {
-        // Close overlay after download starts
+        // Direct download link: close overlay after download starts
         setTimeout(() => dialogManager.hide(), 500);
       }
     });

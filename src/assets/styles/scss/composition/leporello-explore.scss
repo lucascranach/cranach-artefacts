@@ -308,4 +308,34 @@ a.cranach-compare-launcher{
       margin-bottom: 0;
     }
   }
+
+  // The link carries target="_blank", so it inherits the base look (icon,
+  // dotted underline, hover) from the a[target=_blank] rule in body-and-typo.scss.
+  // Here we only add the loading state.
+  .download-link--resized {
+    // While the download is being fetched, replace the icon with a spinner.
+    &.is-loading {
+      opacity: 0.6;
+      pointer-events: none;
+
+      &::after {
+        display: inline-block;
+        width: 0.9em;
+        height: 0.9em;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        margin-left: 0.5em;
+        animation: download-spin 0.7s linear infinite;
+        border-radius: 50%;
+        content: "";
+        vertical-align: -0.1em;
+      }
+    }
+  }
+}
+
+@keyframes download-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
