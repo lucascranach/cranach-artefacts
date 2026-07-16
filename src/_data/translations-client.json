@@ -117,7 +117,11 @@
     "en": "Large"
   },
   "size-origin": {
-    "de": "Originalgröße",
-    "en": "Original Size"
+    "de": "Maximal",
+    "en": "Maximum"
+  },
+  "downloadError": {
+    "de": "Download fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "en": "Download failed. Please try again."
   }
 }
