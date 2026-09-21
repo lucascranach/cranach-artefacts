@@ -10,6 +10,7 @@ CACHE_FOLDER=.cache
 API_ENDPOINT=https://lucascranach.org/data-proxy/json-data.php
 API_KEY=****************
 API_METADATA_EXIF_ENDPOINT=https://lucascranach.org/data-proxy/metadata-exif.php
+API_IMAGE_DOWNLOAD_ENDPOINT=https://lucascranach.org/data-proxy/image-download.php
 ```
 
 ## Lokale Entwicklungsumgebung starten
