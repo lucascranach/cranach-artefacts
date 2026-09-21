@@ -1115,6 +1115,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // $config['maxSize'] in the data-proxy image-download.php endpoint.
     const MAX_DOWNLOAD_SIZE = 4400;
 
+    // Maps the image sizes delivered by the data (keys) to the labels shown in
+    // the overlay (values -> translation key `downloadLabel-<value>`). Only the
+    // sizes listed here are offered for download.
+    const DOWNLOAD_SIZE_LABELS = {
+      medium: 'small',
+      large: 'medium',
+      origin: 'large',
+    };
+
     // Create dialog manager with custom callbacks
     const dialogManager = createDialogManager(overlay, {
       onBeforeShow: (imageData) => {
@@ -1125,8 +1134,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         // the backend, which decides on its own whether to deliver the original
         // or a downscaled version — the maximum edge length is enforced there.
         const downloadLinks = downloadData.map((sizeData) => {
-          if (!translations[`size-${sizeData.size}`]) return '';
-          const sizeLabel = translations[`size-${sizeData.size}`][langCode];
+          const labelKey = DOWNLOAD_SIZE_LABELS[sizeData.size];
+          const labelTranslation = labelKey && translations[`downloadLabel-${labelKey}`];
+          if (!labelTranslation) return '';
+          const sizeLabel = labelTranslation[langCode];
           const { width, height } = sizeData.dimensions || {};
 
           if (sizeData.size === 'origin') {

@@ -108,17 +108,17 @@
     "de": "Bildinformationen",
     "en": "Image Information"
   },
-  "size-medium": {
+  "downloadLabel-small": {
+    "de": "Klein",
+    "en": "Small"
+  },
+  "downloadLabel-medium": {
     "de": "Mittel",
     "en": "Medium"
   },
-  "size-large": {
+  "downloadLabel-large": {
     "de": "Groß",
     "en": "Large"
-  },
-  "size-origin": {
-    "de": "Maximal",
-    "en": "Maximum"
   },
   "downloadError": {
     "de": "Download fehlgeschlagen. Bitte versuchen Sie es erneut.",
