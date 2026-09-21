@@ -1,6 +1,8 @@
 exports.getReports = (eleventy, { content }, langCode, config, type) => {
   const { contentTypes } = config;
-  const documentsPath = `${config.documentsBasePath}/${content.inventoryNumber}`;
+  const documentsPath = content.objectName
+    ? `${config.documentsBasePath}/${content.inventoryNumber}_${content.objectName}`
+    : `${config.documentsBasePath}/${content.inventoryNumber}`;
   const reports = content.restorationSurveys.filter((rs) => rs.type === type);
   const prefix = content.inventoryNumberPrefix;
 
