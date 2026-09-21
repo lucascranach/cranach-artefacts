@@ -116,7 +116,7 @@ exports.getRealObject = function (eleventy, pageData, langCode, masterData) {
       <script>
         const objectData = {};
         objectData.metadataExifApiEndpoint = "${process.env.API_METADATA_EXIF_ENDPOINT}";
-        objectData.imageDownloadApiEndpoint = "${process.env.API_IMAGE_DOWNLOAD_ENDPOINT}";
+        objectData.imageDownloadApiEndpoint = "${process.env.API_IMAGE_DOWNLOAD_ENDPOINT || ''}";
         objectData.metadataApiKey = "${process.env.METADATA_API_KEY}";
         objectData.langCode = "${langCode}";
         objectData.imageStack = ${imageStack};
