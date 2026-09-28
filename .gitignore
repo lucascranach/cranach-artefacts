@@ -214,6 +214,7 @@ cda-graphics-v2.virtual.de.json
 cda-graphics-v2.virtual.en.json
 compiled-assets/
 compiled-content/
+cranach-data/
 docs/
 rsync.sh
 env.txt

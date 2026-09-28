@@ -4,6 +4,8 @@
   "description": "Artefact pages for cda",
   "main": "index.js",
   "scripts": {
+    "stats:images": "node helper/stats/count-images.js",
+    "stats:report": "node helper/stats/report.js",
     "lint:css": "stylelint src/assets/styles/scss/**/*.scss",
     "lint:css:fix": "stylelint src/assets/styles/scss/**/*.scss --fix",
     "lint:js": "eslint src/**/*.js",
