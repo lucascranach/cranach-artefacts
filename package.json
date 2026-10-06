@@ -4,6 +4,7 @@
   "description": "Artefact pages for cda",
   "main": "index.js",
   "scripts": {
+    "sync:import": "bash helper/sync-import.sh",
     "stats:images": "node helper/stats/count-images.js",
     "stats:report": "node helper/stats/report.js",
     "lint:css": "stylelint src/assets/styles/scss/**/*.scss",
