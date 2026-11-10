@@ -514,14 +514,10 @@ class ImageViewer {
     const { translations } = globalData;
     const { langCode } = globalData;
     const captionId = 'ImageDescTitle';
-    const description = !metadata || !metadata.description || !metadata.description[langCode]
-      ? `<h3 id="${captionId}" class="image-caption__title is-expand-trigger js-expand-trigger" data-js-expanded="false"
-        data-js-expandable="completeImageData">
-        ${translations.imageInformation[langCode]}</h3>`
-      : `<h3 id="${captionId}" 
-          class="image-caption__title is-expand-trigger js-expand-trigger" data-js-expanded="true"
-          data-js-expandable="completeImageData">
-          ${metadata.description[langCode]}</h3>`;
+    const descriptionText = !metadata || !metadata.description || !metadata.description[langCode]
+      ? translations.imageInformation[langCode]
+      : metadata.description[langCode];
+    const description = `<h3 id="${captionId}" class="image-caption__title">${descriptionText}</h3>`;
 
     const getCompleteImageData = (data) => {
       const rows = data.map((item) => `
@@ -532,11 +528,9 @@ class ImageViewer {
       `);
 
       return rows.length === 0 ? '' : `
-        <div id="completeImageData" class="expandable-content">
-          <table class="info-table is-two-third is-tight">
-            ${rows.join('')}
-          </table>
-        </div>
+        <table class="info-table is-two-third is-tight">
+          ${rows.join('')}
+        </table>
       `;
     };
 
@@ -565,12 +559,6 @@ class ImageViewer {
 
     this.caption.innerHTML = caption;
     this.addClipboardInteraction(img.id);
-    const storedInteractions = localStorage.getItem('interactions')
-      ? JSON.parse(localStorage.getItem('interactions'))
-      : false;
-    if (!storedInteractions) return;
-    if (!storedInteractions.completeImageData) return;
-    restoreSingleInteraction('completeImageData', storedInteractions.completeImageData);
   }
 
   handleTrigger(trigger) {
